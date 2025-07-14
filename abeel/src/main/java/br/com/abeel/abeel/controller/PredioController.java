@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/predio")
+@CrossOrigin(origins = "*")
 public class PredioController {
 
     @Autowired

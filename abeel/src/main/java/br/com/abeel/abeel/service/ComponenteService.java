@@ -6,6 +6,7 @@ import br.com.abeel.abeel.entity.Componente;
 import br.com.abeel.abeel.entity.Elevador;
 import br.com.abeel.abeel.repository.ComponenteRepository;
 import br.com.abeel.abeel.repository.ElevadorRepository;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,9 +47,13 @@ public class ComponenteService {
         if (nome == null || nome.trim().isEmpty())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nome está em branco");
         if (!nome.matches("^[\\p{L} ]{3,}$"))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nome inválido");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nome está inválido");
         if (cr.findByNome(nome).isPresent())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Esse componente já existe");
+        if(!nome.matches("^[\\p{L} ]{3,}$"))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Observacao está invalida");
+        if(!imagem.getContentType().matches("^image/.*$"))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Imagem está invalida");
 
         byte[] imagemByte = null;
         try{
@@ -82,7 +87,9 @@ public class ComponenteService {
             String nome,
             boolean situacao,
             MultipartFile imagem,
-            boolean hePadrao){
+            String observacao,
+            boolean hePadrao
+        ){
         ResponseEntity<?> respostaElevador = validarElevador(idElevador);
         ResponseEntity<?> respostaCampos = validarCampos(nome, imagem);
 
@@ -97,6 +104,7 @@ public class ComponenteService {
                 nome,
                 situacao,
                 imagemBytes,
+                observacao,
                 hePadrao,
                 elevador
         );
@@ -113,6 +121,13 @@ public class ComponenteService {
         var elevador = (Elevador) respostaElevador.getBody();
 
         List<Componente> listaComponentes = cr.findAllByElevador(elevador);
+        List<ComponenteSaidaDto> dtoList = listaComponentes.stream()
+                .map(ComponenteSaidaDto::fromEntity)
+                .toList();
+        return ResponseEntity.status(HttpStatus.OK).body(dtoList);
+    }
+    public ResponseEntity<?> listarTodos(){
+        List<Componente> listaComponentes = (List<Componente>) cr.findAll();
         List<ComponenteSaidaDto> dtoList = listaComponentes.stream()
                 .map(ComponenteSaidaDto::fromEntity)
                 .toList();
@@ -157,6 +172,7 @@ public class ComponenteService {
         componente.setNome(dto.nome());
         componente.setSituacao(dto.situacao());
         componente.setImagem(dto.imagem());
+        componente.setObservacao(dto.observacao());
         componente.setHePadrao(dto.hePadrao());
 
         cr.save(componente);

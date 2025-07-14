@@ -9,11 +9,20 @@ import br.com.abeel.abeel.entity.Predio;
 import br.com.abeel.abeel.repository.ComponenteRepository;
 import br.com.abeel.abeel.repository.ElevadorRepository;
 import br.com.abeel.abeel.repository.PredioRepository;
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.draw.LineSeparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -85,6 +94,7 @@ public class ElevadorService {
                     componentePadrao.getNome(),
                     componentePadrao.isSituacao(),
                     componentePadrao.getImagem(),
+                    componentePadrao.getObservacao(),
                     false,
                     elevador
             );
@@ -112,6 +122,7 @@ public class ElevadorService {
                         componente.getNome(),
                         componente.isSituacao(),
                         componente.getImagem(),
+                        componente.getObservacao(),
                         componente.isHePadrao()
                         ));
             }
@@ -137,6 +148,7 @@ public class ElevadorService {
                         componente.getNome(),
                         componente.isSituacao(),
                         componente.getImagem(),
+                        componente.getObservacao(),
                         componente.isHePadrao()
                         ));
             }
@@ -170,4 +182,84 @@ public class ElevadorService {
         er.save(elevador);
         return ResponseEntity.status(HttpStatus.OK).body("Elevador editado com sucesso");
     }
+
+    public ResponseEntity<?> gerarRelatorio(UUID idPredio, UUID idElevador){
+        var resposta = validarElevadorPredio(idPredio, idElevador);
+
+        if(resposta.getStatusCode() != HttpStatus.OK) return resposta;
+
+        var elevador = (Elevador) resposta.getBody();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        Document document = new Document(PageSize.A4);
+
+        PdfWriter.getInstance(document, baos);
+        document.open();
+
+        Font fonteTitulo = FontFactory.getFont(FontFactory.TIMES_BOLD);
+        Paragraph titulo = new Paragraph(
+                new Chunk("RIA 2025 HOMOLOGADO PELA ABEEL", fonteTitulo)
+        );
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        document.add(titulo);
+
+        LineSeparator linha = new LineSeparator();
+        linha.setLineWidth(1f);
+        linha.setPercentage(100f);
+        linha.setAlignment(Element.ALIGN_CENTER);
+        linha.setOffset(-2);
+        document.add(linha);
+
+        PdfPTable tabelaCabecalho = new PdfPTable(2);
+        tabelaCabecalho.setWidthPercentage(100);
+        tabelaCabecalho.setSpacingBefore(10f);
+        tabelaCabecalho.setSpacingAfter(10f);
+
+        PdfPCell celulaPredio = new PdfPCell(new Phrase("Predio: "+ elevador.getPredio().getNome()));
+        celulaPredio.setBorder(Rectangle.NO_BORDER);
+
+        PdfPCell celulaBairro = new PdfPCell(new Phrase("Bairro: "+ elevador.getPredio().getBairro()));
+        celulaBairro.setBorder(Rectangle.NO_BORDER);
+
+        tabelaCabecalho.addCell(celulaPredio);
+        tabelaCabecalho.addCell(celulaBairro);
+
+        PdfPCell celulaElevador = new PdfPCell(new Phrase("Elevador: "+ elevador.getModelo()));
+        celulaElevador.setColspan(2);
+        celulaElevador.setBorder(Rectangle.NO_BORDER);
+
+        tabelaCabecalho.addCell(celulaElevador);
+        document.add(tabelaCabecalho);
+
+        PdfPTable tabelaConteudo = new PdfPTable(3);
+        tabelaConteudo.setWidthPercentage(100);
+        tabelaConteudo.setSpacingBefore(10f);
+        tabelaConteudo.setSpacingAfter(10f);
+
+        PdfPCell celulaNome =  new PdfPCell(new Phrase("Componente", fonteTitulo));
+        celulaNome.setBackgroundColor(Color.YELLOW);
+        PdfPCell celulaSituacao = new PdfPCell(new Phrase("Estado", fonteTitulo));
+        celulaSituacao.setBackgroundColor(Color.YELLOW);
+        PdfPCell celulaObservacao = new PdfPCell(new Phrase("Observacao", fonteTitulo));
+        celulaObservacao.setBackgroundColor(Color.YELLOW);
+
+        tabelaConteudo.addCell(celulaNome);
+        tabelaConteudo.addCell(celulaSituacao);
+        tabelaConteudo.addCell(celulaObservacao);
+
+        for (Componente componente : elevador.getComponentes()){
+            PdfPCell celulaNoneC = new PdfPCell(new Phrase(componente.getNome()));
+            PdfPCell celulaSituacaoC = new PdfPCell(new Phrase(componente.isSituacao() ? "Bom" : "Ruim"));
+            var obs = componente.getObservacao() == null ? "Não há observação" : componente.getObservacao();
+            PdfPCell celulaObservacaoC = new PdfPCell(new Phrase(obs));
+            tabelaConteudo.addCell(celulaNoneC);
+            tabelaConteudo.addCell(celulaSituacaoC);
+            tabelaConteudo.addCell(celulaObservacaoC);
+        }
+        document.add(tabelaConteudo);
+        document.close();
+        return ResponseEntity.status(HttpStatus.OK).body(baos.toByteArray());
+    }
+
 }
