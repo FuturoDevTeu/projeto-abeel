@@ -31,6 +31,9 @@ public class Componente {
     @Column(name = "imagem", nullable = true, columnDefinition = "LONGBLOB")
     private byte[] imagem;
 
+    @Column(name = "observacao")
+    private String observacao;
+
     @Column(name = "peca_padrao")
     private boolean hePadrao;
 
@@ -38,10 +41,11 @@ public class Componente {
     @JoinColumn(name = "elevador_id")
     private Elevador elevador;
 
-    public Componente(String nome, boolean situacao, byte[] imagem, boolean hePadrao, Elevador elevador) {
+    public Componente(String nome, boolean situacao, byte[] imagem, String observacao, boolean hePadrao, Elevador elevador) {
         this.nome = nome;
         this.situacao = situacao;
         this.imagem = imagem;
+        this.observacao = observacao;
         this.hePadrao = hePadrao;
         this.elevador = elevador;
     }

@@ -4,7 +4,7 @@ import br.com.abeel.abeel.entity.Componente;
 
 import java.util.Base64;
 
-public record ComponenteSaidaDto(String nome, boolean situacao, String imagemBase64, boolean hePadrao) {
+public record ComponenteSaidaDto(String nome, boolean situacao, String imagemBase64, String observacao, boolean hePadrao) {
     public static ComponenteSaidaDto fromEntity(Componente componente){
         String imagemBase64 = null;
         if(componente.getImagem() != null){
@@ -15,6 +15,7 @@ public record ComponenteSaidaDto(String nome, boolean situacao, String imagemBas
                 componente.getNome(),
                 componente.isSituacao(),
                 imagemBase64,
+                componente.getObservacao(),
                 componente.isHePadrao()
         );
     }

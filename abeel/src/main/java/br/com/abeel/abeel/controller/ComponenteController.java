@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/componente")
+@CrossOrigin(origins = "*")
 public class ComponenteController {
 
     @Autowired
@@ -21,10 +22,11 @@ public class ComponenteController {
             @PathVariable("idElevador") UUID idElevador,
             @RequestParam("nome") String nome,
             @RequestParam("situacao") boolean situacao,
-            @RequestParam("imagem")MultipartFile imagem,
+            @RequestParam("imagem") MultipartFile imagem,
+            @RequestParam("observacao") String observacao,
             @RequestParam("hePadrao") boolean hePadrao
     ){
-        return cs.cadastrar(idElevador, nome, situacao, imagem, hePadrao);
+        return cs.cadastrar(idElevador, nome, situacao, imagem, observacao, hePadrao);
     }
 
     @GetMapping("/{idElevador}/listar")
@@ -32,6 +34,10 @@ public class ComponenteController {
         return cs.listar(idElevador);
     }
 
+    @GetMapping("/listar")
+    public ResponseEntity<?> listar(){
+        return cs.listarTodos();
+    }
     @GetMapping("/{idElevador}/{nome}")
     public ResponseEntity<?> buscar(@PathVariable("idElevador") UUID idElevador, @PathVariable("nome") String nome){
         return cs.buscar(idElevador, nome);
