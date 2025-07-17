@@ -1,0 +1,29 @@
+.predios-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+  padding: 16px;
+  margin-top: 30px;
+}
+
+.predio-card {
+  width: 360px;
+  height: 180px; /* abaixei a altura */
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.25);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  /* removido efeito no selected */
+  /* efeito no hover abaixo */
+}
+
+.predio-card:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+  z-index: 10;
+}
