@@ -1,0 +1,17 @@
+<div class="elevadores-page-container">
+  <h2>Elevadores</h2> 
+
+  <div *ngIf="elevadoresDoPredio && elevadoresDoPredio.length > 0; else noElevadores" class="elevadores-list-container">
+    <mat-card *ngFor="let elevador of elevadoresDoPredio" class="elevador-card">
+      <mat-card-content>
+        <p><strong>ID:</strong> {{ elevador.id }}</p>
+        <p><strong>Modelo:</strong> {{ elevador.modelo }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <ng-template #noElevadores>
+    <p>Este prédio não possui elevadores cadastrados ou houve um erro ao carregar.</p>
+  </ng-template>
+
+  <button mat-raised-button color="primary" routerLink="/predios">Voltar para Prédios</button>
+</div>

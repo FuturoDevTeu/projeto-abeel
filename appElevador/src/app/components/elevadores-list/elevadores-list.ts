@@ -1,0 +1,66 @@
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+
+interface Elevador {
+  id: string;
+  modelo: string;
+  componentes?: any[];
+}
+
+@Component({
+  selector: 'app-elevadores',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    RouterLink,
+    MatButtonModule
+  ],
+  templateUrl: './elevadores-list.html',
+  styleUrl: './elevadores-list.css'
+})
+export class ElevadoresComponent implements OnInit {
+  predioId: string | null = null;
+  elevadoresDoPredio: Elevador[] = [];
+
+  private elevadoresApiUrl = 'http://localhost:8080/elevador';
+
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) { }
+
+  ngOnInit(): void {
+    this.predioId = this.route.snapshot.paramMap.get('id');
+
+    if (this.predioId) {
+      this.carregarElevadoresDoPredio(this.predioId);
+    } else {
+      console.error('ID do prédio não encontrado na rota de elevadores. Verifique a URL.');
+      this.elevadoresDoPredio = [];
+      this.cdr.detectChanges();
+    }
+  }
+
+  carregarElevadoresDoPredio(idPredio: string): void {
+    this.elevadoresDoPredio = [];
+    const url = `${this.elevadoresApiUrl}/${idPredio}/listar`;
+
+    this.http.get<any[]>(url).subscribe({
+      next: (data) => {
+        this.elevadoresDoPredio = Array.from(data);
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(`Erro ao carregar elevadores para o prédio ${idPredio}:`, error);
+        this.elevadoresDoPredio = [];
+        this.cdr.detectChanges();
+      }
+    });
+  }
+}
