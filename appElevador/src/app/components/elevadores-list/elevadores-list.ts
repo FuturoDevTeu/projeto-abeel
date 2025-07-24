@@ -4,12 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-
-interface Elevador {
-  id: string;
-  modelo: string;
-  componentes?: any[];
-}
+import { Elevador } from '../../types/Elevador';
+import { ElevadorService } from '../../services/elevador-service';
 
 @Component({
   selector: 'app-elevadores',
@@ -27,11 +23,9 @@ export class ElevadoresComponent implements OnInit {
   predioId: string | null = null;
   elevadoresDoPredio: Elevador[] = [];
 
-  private elevadoresApiUrl = 'http://localhost:8080/elevador';
-
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient,
+    private elevadorService: ElevadorService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -48,12 +42,12 @@ export class ElevadoresComponent implements OnInit {
   }
 
   carregarElevadoresDoPredio(idPredio: string): void {
+    console.log(sessionStorage.getItem('token'))
     this.elevadoresDoPredio = [];
-    const url = `${this.elevadoresApiUrl}/${idPredio}/listar`;
 
-    this.http.get<any[]>(url).subscribe({
-      next: (data) => {
-        this.elevadoresDoPredio = Array.from(data);
+    this.elevadorService.carregarElevadoresDoPredio(idPredio).subscribe({
+      next: (elevador) => {
+        this.elevadoresDoPredio = Array.from(elevador);
         this.cdr.detectChanges();
       },
       error: (error) => {

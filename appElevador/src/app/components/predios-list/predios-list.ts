@@ -1,20 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // ChangeDetectorRef permanece
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
-
-interface Elevador {
-  id: string;
-  modelo: string;
-}
-
-interface Predio {
-  id: string;
-  nome: string;
-  bairro: string;
-  elevadores?: Elevador[];
-}
+import { PredioService } from '../../services/predio-service';
+import { Predio } from '../../types/Predio';
 
 @Component({
   selector: 'app-predios-list',
@@ -24,37 +13,39 @@ interface Predio {
   styleUrls: ['./predios-list.css']
 })
 export class PrediosList implements OnInit {
+
   predios: Predio[] = [];
   selectedPredioId: string | null = null;
-  private apiUrl = 'http://localhost:8080/predio/listar';
 
   constructor(
     private router: Router,
-    private http: HttpClient,
-    private cdr: ChangeDetectorRef // Injetamos o ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private predioService: PredioService
+
   ) { }
 
   ngOnInit(): void {
-    this.carregarPredios();
+    this.carregarPredios()
   }
 
-  carregarPredios(): void {
-    this.http.get<any>(this.apiUrl).subscribe({
-      next: (data: any) => {
-        this.predios = Array.from(data); // A correção Array.from(data) permanece
-        this.selectedPredioId = null;
-        this.cdr.detectChanges(); // A força de detecção de mudanças permanece
-      },
-      error: (error) => {
-        console.error('Erro ao carregar prédios:', error); // Mantive este log de erro, é importante
-        this.predios = [];
-        this.cdr.detectChanges(); // Força detecção mesmo em caso de erro
-      }
-    });
+  carregarPredios(){
+    console.log(sessionStorage.getItem('token'))
+    this.predioService.obterPredios()
+      .subscribe({
+        next: (predios) =>{
+          this.predios = Array.from(predios);
+          this.selectedPredioId = null;
+          this.cdr.detectChanges();  
+        },
+        error: (error) =>{
+          console.error('Erro ao carregar predios '+ error),
+          this.predios = [],
+          this.cdr.detectChanges;
+        }
+      });
   }
-
-  selecionarPredio(id: string) {
+  selecionarPredio(id: string){
     this.selectedPredioId = id;
-    this.router.navigate(['/elevadores', id]);
+    this.router.navigate(['/elevadores', id])
   }
 }
