@@ -5,3 +5,4 @@ import java.util.UUID;
 
 public record PredioSaidaDto(UUID id, String nome, String bairro, List<ElevadorEntradaDto> elevadores){
 }
+    
