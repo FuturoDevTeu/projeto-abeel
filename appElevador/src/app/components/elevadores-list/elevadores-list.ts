@@ -57,4 +57,70 @@ export class ElevadoresComponent implements OnInit {
       }
     });
   }
+
+  cadastrarElevadorNoPredio(idPredio: string, elevador: Elevador){
+    this.elevadorService.cadastrarElevadorNoPredio(idPredio, elevador)
+    .subscribe({
+      next: (res) => {
+        console.log(res);
+        this.cdr.detectChanges();
+      },
+      error: (err) =>{
+        console.error(err);
+      },
+    })
+  }
+  buscarElevadorNoPredio(idPredio: string, modelo: string){
+    this.elevadorService.buscarElevadorDoPredio(idPredio, modelo)
+    .subscribe({
+      next: (res) => {
+        console.log(res);
+        this.cdr.detectChanges();
+      },
+      error: (err) =>{
+        console.error(err);
+      },
+    })
+  }
+  removerElevadorNoPredio(idPredio: string, idElevador: string){
+    this.elevadorService.removerElevadorDoPredio(idPredio, idElevador)
+    .subscribe({
+      next: (res) => {
+        console.log(res);
+        this.cdr.detectChanges();
+      },
+      error: (err) =>{
+        console.error(err);
+      },
+    })
+  }
+  editarElevadorNoPredio(idPredio: string, idElevador: string, elevador: Elevador){
+    this.elevadorService.editarElevadorDoPredio(idPredio, idElevador, elevador)
+    .subscribe({
+      next: (res) => {
+        console.log(res);
+        this.cdr.detectChanges();
+      },
+      error: (err) =>{
+        console.error(err);
+      },
+    })
+  }
+
+  gerarRelatorio(idPredio: string, idElevador: string){
+    this.elevadorService.gerarRelatorio(idPredio, idElevador)
+    .subscribe({
+      next: (blob) => {
+        const fileUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.download = 'relatorio.pdf';
+        link.click();
+        URL.revokeObjectURL(fileUrl);
+      },
+      error: (err) =>{
+        console.error(err);
+      },
+    })
+  }
 }

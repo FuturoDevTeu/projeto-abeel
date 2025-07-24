@@ -29,7 +29,6 @@ export class PrediosList implements OnInit {
   }
 
   carregarPredios(){
-    console.log(sessionStorage.getItem('token'))
     this.predioService.obterPredios()
       .subscribe({
         next: (predios) =>{
@@ -40,10 +39,68 @@ export class PrediosList implements OnInit {
         error: (error) =>{
           console.error('Erro ao carregar predios '+ error),
           this.predios = [],
-          this.cdr.detectChanges;
+          this.cdr.detectChanges();
         }
       });
   }
+
+  cadastrarPredio(predio: Predio){
+    this.predioService.cadastrarPredio(predio)
+    .subscribe({
+      next: (res) => {
+        console.log(res);
+        this.cdr.detectChanges();
+      },
+      error: (err) =>{
+        console.log(err)
+        this.cdr.detectChanges();
+      }
+    })
+  }
+
+  buscarPredio(nomePredio: string){
+    this.predioService.buscarPredio(nomePredio)
+    .subscribe({
+      next: (predios) => {
+        this.predios = Array.from(predios);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        this.cdr.detectChanges();
+      }
+    })
+  }
+
+  deletarPredio(idPredio: string){
+    this.predioService.deletarPredio(idPredio)
+    .subscribe({
+      next: (res) => {
+        console.log(res);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        this.cdr.detectChanges();
+      }
+    })
+  }
+
+  editarPredio(predio: Predio){
+    this.predioService.editarPredio(predio)
+    .subscribe({
+      next: (res) =>{
+        console.log(res)
+        this.cdr.detectChanges();
+      },
+      error: (err) =>{
+        console.error(err)
+        this.cdr.detectChanges();
+      },
+    })
+  }
+
+
   selecionarPredio(id: string){
     this.selectedPredioId = id;
     this.router.navigate(['/elevadores', id])

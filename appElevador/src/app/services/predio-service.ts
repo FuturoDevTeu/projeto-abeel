@@ -17,7 +17,19 @@ export class PredioService {
     return this.httpClient.get<Predio[]>(this.url + '/predio/listar')
   }
 
-  cadastrarPredio(predio: Predio){
+  cadastrarPredio(predio: Predio): Observable<string>{
     return this.httpClient.post<string>(this.url + '/predio/cadastrar', predio)
+  }
+
+  buscarPredio(nomePredio: string): Observable<Predio[]>{
+    return this.httpClient.get<Predio[]>(this.url+"/predio/buscar/"+nomePredio);
+  }
+
+  deletarPredio(idPredio: string): Observable<string>{
+    return this.httpClient.delete<string>(this.url+"/deletar/"+idPredio);
+  }
+
+  editarPredio( predio: Predio): Observable<string>{
+    return this.httpClient.put<string>(this.url+"/editar/"+predio.id, predio);
   }
 }

@@ -13,7 +13,29 @@ export class ElevadorService {
 
   constructor(private httpClient: HttpClient) { }
 
-  carregarElevadoresDoPredio(idPredio: string){
-    return this.httpClient.get<Elevador[]>(this.url + '/elevador/'+idPredio+'/listar')
+  carregarElevadoresDoPredio(idPredio: string): Observable<Elevador[]>{
+    return this.httpClient.get<Elevador[]>(this.url + '/elevador/'+idPredio+'/listar');
+  }
+
+  cadastrarElevadorNoPredio(idPredio: string, elevador: Elevador): Observable<string>{
+    return this.httpClient.post<string>(this.url+"/"+idPredio+"/cadastrar", elevador);
+  }  
+
+  buscarElevadorDoPredio(idPredio: string, modelo: string): Observable<string>{
+    return this.httpClient.get<string>(this.url+"/"+idPredio+"/"+modelo);
+  }
+
+  removerElevadorDoPredio(idPredio: string, idElevador: string): Observable<string>{
+    return this.httpClient.delete<string>(this.url+"/"+idPredio+"/"+idElevador);
+  }
+
+  editarElevadorDoPredio(idPredio: string, idElevador: string, elevador: Elevador): Observable<string>{
+    return this.httpClient.put<string>(this.url+"/"+idPredio+"/"+idElevador, elevador);
+  }
+
+  gerarRelatorio(idPredio: string, idElevador: string): Observable<Blob>{
+    return this.httpClient.get(this.url+"/"+idPredio+"/"+idElevador+"/relatorio",{
+        responseType: 'blob'
+    });
   }
 }

@@ -2,5 +2,7 @@ export interface Componente{
     id: string,
     nome: string,
     situacao: boolean,
-    imagem?: string,
+    imagemBase64?: string,
+    observacao?: string,
+    hePadrao: boolean
 }
