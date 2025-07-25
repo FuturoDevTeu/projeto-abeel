@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { Elevador } from '../../types/Elevador';
 import { ElevadorService } from '../../services/elevador-service';
+import { Header } from "../header/header";
 
 @Component({
   selector: 'app-elevadores',
@@ -14,8 +15,9 @@ import { ElevadorService } from '../../services/elevador-service';
     CommonModule,
     MatCardModule,
     RouterLink,
-    MatButtonModule
-  ],
+    MatButtonModule,
+    Header
+],
   templateUrl: './elevadores-list.html',
   styleUrl: './elevadores-list.css'
 })

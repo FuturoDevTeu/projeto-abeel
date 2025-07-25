@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
 import { Predio } from '../types/Predio';
 import { Observable } from 'rxjs';
+import { PredioRequest } from '../types/PredioRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class PredioService {
     return this.httpClient.get<Predio[]>(this.url + '/predio/listar')
   }
 
-  cadastrarPredio(predio: Predio): Observable<string>{
+  cadastrarPredio(predio: PredioRequest): Observable<string>{
     return this.httpClient.post<string>(this.url + '/predio/cadastrar', predio)
   }
 

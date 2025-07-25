@@ -20,26 +20,16 @@
         <form>
           <div class="form-group">
             <label for="nome">Nome:</label>
-            <input type="text" name="nome" required>
+            <input type="text" name="nome" [(ngModel)]="predio.nome" required>
           </div>
 
           <div class="form-group">
-            <label for="endereco">Endereço:</label>
-            <input type="text" name="endereco" required>
-          </div>
-
-          <div class="form-group">
-            <label for="cidade">Cidade:</label>
-            <input type="text" name="cidade" required>
-          </div>
-
-          <div class="form-group">
-            <label for="qtdElevadores">Quantidade de Elevadores:</label>
-            <input type="number" name="qtdElevadores" required>
+            <label for="bairro">Bairro:</label>
+            <input type="text" name="bairro"  [(ngModel)]="predio.bairro" required>
           </div>
 
           <div class="form-actions">
-            <button type="button" mat-raised-button color="primary">Cadastrar</button>
+            <button type="button" mat-raised-button color="primary" (click)="submitForm()">Cadastrar</button>
             <button type="button" class="close-button" (click)="isModalOpen = false">Fechar</button>
           </div>
         </form>

@@ -4,11 +4,13 @@ import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { PredioService } from '../../services/predio-service';
 import { Predio } from '../../types/Predio';
+import { Header } from "../header/header";
+import { PredioRequest } from '../../types/PredioRequest';
 
 @Component({
   selector: 'app-predios-list',
   standalone: true,
-  imports: [MatCardModule, CommonModule],
+  imports: [MatCardModule, CommonModule, Header],
   templateUrl: './predios-list.html',
   styleUrls: ['./predios-list.css']
 })
@@ -44,12 +46,13 @@ export class PrediosList implements OnInit {
       });
   }
 
-  cadastrarPredio(predio: Predio){
+  cadastrarPredio(predio: PredioRequest){
     this.predioService.cadastrarPredio(predio)
     .subscribe({
       next: (res) => {
         console.log(res);
         this.cdr.detectChanges();
+        this.carregarPredios();
       },
       error: (err) =>{
         console.log(err)
@@ -78,6 +81,7 @@ export class PrediosList implements OnInit {
       next: (res) => {
         console.log(res);
         this.cdr.detectChanges();
+        this.carregarPredios();
       },
       error: (err) => {
         console.error(err);
@@ -92,6 +96,7 @@ export class PrediosList implements OnInit {
       next: (res) =>{
         console.log(res)
         this.cdr.detectChanges();
+        this.carregarPredios();
       },
       error: (err) =>{
         console.error(err)
