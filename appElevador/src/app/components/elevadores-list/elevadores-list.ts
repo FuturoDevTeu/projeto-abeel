@@ -1,11 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { Elevador } from '../../types/Elevador';
 import { ElevadorService } from '../../services/elevador-service';
+import { Header } from "../header/header";
+import { FormsModule } from '@angular/forms';
+import { ElevadorRequest } from '../../types/ElevadorRequest';
 
 @Component({
   selector: 'app-elevadores',
@@ -14,20 +16,39 @@ import { ElevadorService } from '../../services/elevador-service';
     CommonModule,
     MatCardModule,
     RouterLink,
-    MatButtonModule
-  ],
+    MatButtonModule,
+    FormsModule,
+    Header
+],
   templateUrl: './elevadores-list.html',
   styleUrl: './elevadores-list.css'
 })
 export class ElevadoresComponent implements OnInit {
+  
   predioId: string | null = null;
   elevadoresDoPredio: Elevador[] = [];
+  isModalOpen = false;
+  elevador: ElevadorRequest = {modelo: "", componente: []};
 
   constructor(
     private route: ActivatedRoute,
     private elevadorService: ElevadorService,
     private cdr: ChangeDetectorRef
   ) { }
+ 
+  abrirModalElevador(){
+    this.isModalOpen = true;
+  }
+
+  submitForm(){
+    if(this.elevador.modelo){
+      if(this.predioId != null){
+        this.cadastrarElevadorNoPredio(this.predioId, this.elevador);
+        this.elevador.modelo = "";
+        this.isModalOpen = false;
+      }
+    }
+  }
 
   ngOnInit(): void {
     this.predioId = this.route.snapshot.paramMap.get('id');
@@ -58,7 +79,7 @@ export class ElevadoresComponent implements OnInit {
     });
   }
 
-  cadastrarElevadorNoPredio(idPredio: string, elevador: Elevador){
+  cadastrarElevadorNoPredio(idPredio: string, elevador: ElevadorRequest){
     this.elevadorService.cadastrarElevadorNoPredio(idPredio, elevador)
     .subscribe({
       next: (res) => {
@@ -94,7 +115,7 @@ export class ElevadoresComponent implements OnInit {
       },
     })
   }
-  editarElevadorNoPredio(idPredio: string, idElevador: string, elevador: Elevador){
+  editarElevadorNoPredio(idPredio: string, idElevador: string, elevador: ElevadorRequest){
     this.elevadorService.editarElevadorDoPredio(idPredio, idElevador, elevador)
     .subscribe({
       next: (res) => {

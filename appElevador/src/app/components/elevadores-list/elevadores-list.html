@@ -1,3 +1,22 @@
+<app-header [tipo]="'elevador'" (cadastrar)="abrirModalElevador()"></app-header>
+
+<div class="modal" [ngClass]="{'open': isModalOpen}">
+  <div class="modal-content">
+    <span class="close" (click)="isModalOpen = false">&times;</span>
+    <h2>Cadastrar Prédio</h2>
+    <form>
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" [(ngModel)]="elevador.modelo" required>
+      </div>
+      <div class="form-actions">
+        <button type="button" mat-raised-button color="primary" (click)="submitForm()">Cadastrar</button>
+        <button type="button" class="close-button" (click)="isModalOpen = false">Fechar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="elevadores-page-container">
   <h2>Elevadores</h2> 
 

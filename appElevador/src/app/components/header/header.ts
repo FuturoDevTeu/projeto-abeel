@@ -1,22 +1,18 @@
-import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatToolbarModule } from "@angular/material/toolbar";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MatToolbar } from "@angular/material/toolbar";
 
 @Component({
   selector: 'app-header',
-  imports: [MatButtonModule, MatToolbarModule, CommonModule],
+  standalone: true,
   templateUrl: './header.html',
-  styleUrl: './header.css'
+  styleUrls: ['./header.css'],
+  imports: [MatToolbar]
 })
 export class Header {
+  @Input() tipo: 'predio' | 'elevador' = 'predio';
+  @Output() cadastrar = new EventEmitter<void>();
 
-   isModalOpen = false;
-
-  submitForm() {
-    // Lógica para cadastrar
-    console.log('Formulário enviado!');
-    this.isModalOpen = false; // Fecha o modal após enviar
+  abrirCadastro() {
+    this.cadastrar.emit();
   }
-
 }

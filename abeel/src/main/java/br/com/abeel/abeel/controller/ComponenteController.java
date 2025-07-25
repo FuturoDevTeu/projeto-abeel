@@ -38,6 +38,7 @@ public class ComponenteController {
     public ResponseEntity<?> listar(){
         return cs.listarTodos();
     }
+
     @GetMapping("/{idElevador}/{nome}")
     public ResponseEntity<?> buscar(@PathVariable("idElevador") UUID idElevador, @PathVariable("nome") String nome){
         return cs.buscar(idElevador, nome);
