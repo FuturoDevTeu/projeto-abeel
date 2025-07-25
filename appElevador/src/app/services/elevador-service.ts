@@ -3,6 +3,8 @@ import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Elevador } from '../types/Elevador';
+import { ElevadorRequest } from '../types/ElevadorRequest';
+
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,7 @@ export class ElevadorService {
     return this.httpClient.get<Elevador[]>(this.url + '/elevador/'+idPredio+'/listar');
   }
 
-  cadastrarElevadorNoPredio(idPredio: string, elevador: Elevador): Observable<string>{
+  cadastrarElevadorNoPredio(idPredio: string, elevador: ElevadorRequest): Observable<string>{
     return this.httpClient.post<string>(this.url+"/"+idPredio+"/cadastrar", elevador);
   }  
 
@@ -29,7 +31,7 @@ export class ElevadorService {
     return this.httpClient.delete<string>(this.url+"/"+idPredio+"/"+idElevador);
   }
 
-  editarElevadorDoPredio(idPredio: string, idElevador: string, elevador: Elevador): Observable<string>{
+  editarElevadorDoPredio(idPredio: string, idElevador: string, elevador: ElevadorRequest): Observable<string>{
     return this.httpClient.put<string>(this.url+"/"+idPredio+"/"+idElevador, elevador);
   }
 
