@@ -22,7 +22,7 @@
 
   <div *ngIf="elevadoresDoPredio && elevadoresDoPredio.length > 0; else noElevadores" class="elevadores-list-container">
     <mat-card *ngFor="let elevador of elevadoresDoPredio" class="elevador-card">
-      <mat-card-content>
+      <mat-card-content (click)="selecionarElevador(elevador.id)">
         <p><strong>ID:</strong> {{ elevador.id }}</p>
         <p><strong>Modelo:</strong> {{ elevador.modelo }}</p>
       </mat-card-content>

@@ -18,8 +18,8 @@ import java.util.UUID;
 public class Componente {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "componente_id")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "nome", nullable = false)

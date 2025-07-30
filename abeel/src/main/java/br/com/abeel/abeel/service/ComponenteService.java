@@ -52,16 +52,18 @@ public class ComponenteService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Esse componente já existe");
         if(!nome.matches("^[\\p{L} ]{3,}$"))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Observacao está invalida");
-        if(!imagem.getContentType().matches("^image/.*$"))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Imagem está invalida");
-
-        byte[] imagemByte = null;
-        try{
-            imagemByte = imagem.getBytes();
-            return ResponseEntity.status(HttpStatus.OK).body(imagemByte);
-        }catch(IOException ex){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao ler a imagem");
+        if(imagem != null){
+            if(!imagem.getContentType().matches("^image/.*$"))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Imagem está invalida");
+            byte[] imagemByte = null;
+            try{
+                imagemByte = imagem.getBytes();
+                return ResponseEntity.status(HttpStatus.OK).body(imagemByte);
+            }catch(IOException ex){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao ler a imagem");
+            }
         }
+        return ResponseEntity.ok().build();
     }
 
     private ResponseEntity<?> validarElevador(UUID idElevador){
@@ -108,7 +110,6 @@ public class ComponenteService {
                 hePadrao,
                 elevador
         );
-
         cr.save(componente);
         return ResponseEntity.status(HttpStatus.CREATED).body("Componente criado com sucesso");
     }

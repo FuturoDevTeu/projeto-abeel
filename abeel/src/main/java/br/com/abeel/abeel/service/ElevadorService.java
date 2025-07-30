@@ -68,7 +68,12 @@ public class ElevadorService {
 
         return ResponseEntity.status(HttpStatus.OK).body(elevadorOptional.get());
     }
+    public ResponseEntity<?> validarElevador(UUID idElevador){
+        var elevadorOptional = er.findById(idElevador);
 
+        if(elevadorOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Elevador não encontrado");
+        return ResponseEntity.ok().body(elevadorOptional.get());
+    }
     public ResponseEntity<?> cadastrar(UUID idPredio, ElevadorEntradaDto dto){
         ResponseEntity<?> respostaPredio = validarPredio(idPredio);
         ResponseEntity<?> respostaCampos = validarCampos(dto);
@@ -183,8 +188,8 @@ public class ElevadorService {
         return ResponseEntity.status(HttpStatus.OK).body("Elevador editado com sucesso");
     }
 
-    public ResponseEntity<?> gerarRelatorio(UUID idPredio, UUID idElevador){
-        var resposta = validarElevadorPredio(idPredio, idElevador);
+    public ResponseEntity<?> gerarRelatorio(UUID idElevador){
+        var resposta = validarElevador(idElevador);
 
         if(resposta.getStatusCode() != HttpStatus.OK) return resposta;
 
