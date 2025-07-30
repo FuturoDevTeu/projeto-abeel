@@ -1,0 +1,41 @@
+<div>
+    <h2>Checklist</h2>
+    <button (click)="gerarRelatorio()">Gerar relatorio</button>
+</div>
+
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>Situacao</th>
+        <th>Imagem</th>
+        <th>Observação</th>
+    </tr>
+    <tr *ngFor="let componente of componentes">
+        <td>{{ componente.nome }}</td>
+        <td>{{ componente.situacao ? "Bom" : "Ruim"}}</td>
+        <td>
+            <img *ngIf="componente.imagemBase64" [src]="componente.imagemBase64" width="100">
+        </td>
+        <td>{{ componente.observacao}}</td>
+    </tr>
+</table>
+<input type="text" placeholder="Insira o nome" [(ngModel)]="componenteRequest.nome">
+<label>
+    <input type="radio" name="situacao" [(ngModel)]="componenteRequest.situacao" [value]="true">
+    Bom
+</label>
+<label>
+    <input type="radio" name="situacao" [(ngModel)]="componenteRequest.situacao" [value]="false">
+    Ruim
+</label>
+<input type="file" placeholder="Insira a imagem" (change)="arquivoSelecionado($event)">
+<input type="text" placeholder="Insira a Observação" [(ngModel)]="componenteRequest.observacao">
+<label>
+    <input type="radio" name="padrao" [(ngModel)]="componenteRequest.hePadrao" [value]="true">
+    Padrão
+</label>
+<label>
+    <input type="radio" name="padrao" [(ngModel)]="componenteRequest.hePadrao" [value]="false">
+    Não padrão
+</label>
+<button type="button" (click)="cadastrarComponente(elevadorId!, componenteRequest)">cadastrar</button>

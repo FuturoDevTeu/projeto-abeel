@@ -1,7 +1,7 @@
 export interface ComponenteRequest{
     nome: string,
     situacao?: boolean,
-    imagemBase64?: string,
+    imagem?: File,
     observacao?: string,
     hePadrao?: boolean
 }

@@ -42,9 +42,9 @@ public class ElevadorController {
         return es.editar(idPredio, idElevador, dto);
     }
 
-    @GetMapping("/{idPredio}/{idElevador}/relatorio")
-    private ResponseEntity<?> gerarRelatorio(@PathVariable("idPredio") UUID idPredio, @PathVariable("idElevador") UUID idElevador){
-        var resposta = es.gerarRelatorio(idPredio, idElevador);
+    @GetMapping("/{idElevador}/relatorio")
+    private ResponseEntity<?> gerarRelatorio(@PathVariable("idElevador") UUID idElevador){
+        var resposta = es.gerarRelatorio(idElevador);
 
         if(resposta.getStatusCode() != HttpStatus.OK) return resposta;
 

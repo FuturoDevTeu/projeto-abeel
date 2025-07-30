@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,9 +29,11 @@ export class ElevadoresComponent implements OnInit {
   elevadoresDoPredio: Elevador[] = [];
   isModalOpen = false;
   elevador: ElevadorRequest = {modelo: "", componente: []};
+  idElevadorSelecionado = "";
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private elevadorService: ElevadorService,
     private cdr: ChangeDetectorRef
   ) { }
@@ -63,7 +65,6 @@ export class ElevadoresComponent implements OnInit {
   }
 
   carregarElevadoresDoPredio(idPredio: string): void {
-    console.log(sessionStorage.getItem('token'))
     this.elevadoresDoPredio = [];
 
     this.elevadorService.carregarElevadoresDoPredio(idPredio).subscribe({
@@ -128,8 +129,8 @@ export class ElevadoresComponent implements OnInit {
     })
   }
 
-  gerarRelatorio(idPredio: string, idElevador: string){
-    this.elevadorService.gerarRelatorio(idPredio, idElevador)
+  gerarRelatorio(idElevador: string){
+    this.elevadorService.gerarRelatorio(idElevador)
     .subscribe({
       next: (blob) => {
         const fileUrl = URL.createObjectURL(blob);
@@ -144,4 +145,10 @@ export class ElevadoresComponent implements OnInit {
       },
     })
   }
+  selecionarElevador(idElevador: string){
+    this.idElevadorSelecionado = idElevador;
+    console.log(this.idElevadorSelecionado)
+    this.router.navigate(['/componentes', this.idElevadorSelecionado]);
+  }
+
 }

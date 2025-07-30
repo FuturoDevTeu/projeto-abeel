@@ -4,6 +4,7 @@ import { PrediosList } from './components/predios-list/predios-list';
 import { ElevadoresComponent } from './components/elevadores-list/elevadores-list';
 import { LoginPage } from './components/login-page/login-page';
 import { authGuard } from './auth-guard';
+import { ComponenteList } from './components/componente-list/componente-list';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -19,6 +20,12 @@ export const routes: Routes = [
     component: ElevadoresComponent,
     canActivate: [authGuard],
     runGuardsAndResolvers: 'always' // ESSENCIAL: Mantenha esta linha!
+  },
+  {
+    path: 'componentes/:id',
+    component: ComponenteList,
+    canActivate: [authGuard],
+    runGuardsAndResolvers: 'always'
   },
   { path: '**', redirectTo: 'login' }
 ];
