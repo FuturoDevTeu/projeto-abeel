@@ -19,7 +19,7 @@ export const routes: Routes = [
     path: 'elevadores/:id',
     component: ElevadoresComponent,
     canActivate: [authGuard],
-    runGuardsAndResolvers: 'always' // ESSENCIAL: Mantenha esta linha!
+    runGuardsAndResolvers: 'always'
   },
   {
     path: 'componentes/:id',

@@ -1,15 +1,18 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Componente } from '../../types/Componente';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ComponenteService } from '../../services/componente-service';
 import { FormsModule } from '@angular/forms';
 import { ComponenteRequest } from '../../types/ComponenteRequest';
 import { ElevadorService } from '../../services/elevador-service';
+import { Footer } from "../footer/footer";
+import { Header } from "../header/header";
+
 
 @Component({
   selector: 'app-componente-list',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, Footer, Header],
   templateUrl: './componente-list.html',
   styleUrl: './componente-list.css'
 })
@@ -17,10 +20,11 @@ export class ComponenteList implements OnInit{
   elevadorId: string | null = null;
   componentes: Componente[] = [];
   idComponenteSelecionado = "";
-  componenteRequest: ComponenteRequest = {nome: "", hePadrao: false, imagem: undefined, observacao: "", situacao: false};
+  componenteRequest: ComponenteRequest = {nome: "", hePadrao: false, imagem: undefined, observacao: "", situacao: true};
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private componenteService: ComponenteService,
     private cdr: ChangeDetectorRef,
     private elevadorService: ElevadorService
@@ -97,5 +101,14 @@ export class ComponenteList implements OnInit{
     })
   }
   
-
+  voltarElevador(){
+    if(this.elevadorId){
+      this.router.navigate(['/elevadores/', this.elevadorId])
+      .catch(err =>{
+        this.router.navigate(["/login"]);
+      })
+    }else{
+      window.alert("Erro inesperado");
+    }
+  }
 }

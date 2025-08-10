@@ -1,63 +1,202 @@
+/* Estilos para o cabeçalho da aplicação */
 .header-toolbar {
   padding: 0 16px;
-  background-color: #1a1a1a !important; /* Cor de fundo */
-  color: white; /* Cor do texto */
+  background-color: #0A192F !important;
+  color: white;
+  height: 64px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  border-bottom: 6px solid #FFD700;
 }
 
 .header-content {
-  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
+  /* A posição relativa é necessária para que a posição absoluta do logo funcione */
+  position: relative;
 }
 
-.logo-container {
+.logo-area {
   display: flex;
   align-items: center;
-}
-
-.logo-img {
-  height: 40px; /* Altura da imagem */
-  width: auto;
-  margin-right: 12px;
-}
-
-.logo-text {
+  /* Posicionamento absoluto para centralizar o logo, ignorando o botão */
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 20px; /* Tamanho da fonte */
-  font-weight: 500; /* Peso da fonte */
-  color: white; /* Cor do texto */
 }
 
-.spacer {
-  flex: 1 1 auto; /* Espaçador flexível */
+.header-logo {
+  height: 40px;
+  width: auto;
+}
+
+/* Estilos do botão de "Cadastrar" */
+button.mat-raised-button {
+  min-width: 150px;
+  max-width: 150px;
+  width: 150px;
+  padding: 0 12px;
+  font-size: 14px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* Gradiente e sombra aprimorados para um visual mais agradável */
+  background: linear-gradient(135deg, #2e8b57, #3cb371);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Estilo para o botão no estado hover */
+button.mat-raised-button:hover {
+  background: linear-gradient(135deg, #246a44, #2e8b57);
+  box-shadow: 0 6px 15px rgba(46, 139, 87, 0.4);
+  transform: translateY(-3px);
+}
+
+/* Estilo para o botão no estado ativo (quando clicado) */
+button.mat-raised-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(46, 139, 87, 0.2);
+}
+
+/* Estilo para o ícone dentro do botão */
+.mat-raised-button .plus-icon {
+  font-size: 14px;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-box {
+  background-color: #fff;
+  padding: 30px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 350px;
+}
+
+.logo {
+  margin-bottom: 25px;
+}
+
+.logo img {
+  max-width: 120px;
+  height: auto;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+  color: #a0a0a0;
+}
+
+.btn-entrar {
+  width: 100%;
+  padding: 12px;
+  background-color: #2e8b57;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+.btn-entrar:hover {
+  background-color: #246a44;
+}
+
+@media (min-width: 768px) {
+  .header-toolbar {
+    padding: 0 24px;
+  }
+  .header-logo {
+    height: 48px;
+  }
+  button.mat-raised-button {
+    padding: 0 16px;
+    font-size: 16px;
+    height: 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header-toolbar {
+    padding: 0 32px;
+  }
+  .header-logo {
+    height: 50px;
+  }
 }
 
 .modal {
-  display: none; /* Oculta o modal por padrão */
+  display: none;
   position: fixed;
   z-index: 1;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+  background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
 }
 
 .modal.open {
-  display: flex; /* Exibe o modal quando aberto */
+  display: flex;
 }
 
 .modal-content {
-  background-color: #fff; /* Cor de fundo do modal */
-  padding: 40px; /* Aumentando o espaço */
-  border-radius: 10px; /* Bordas arredondadas */
-  width: 500px; /* Largura do modal */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra */
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  width: 500px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 576px) {
+  .modal-content {
+    width: 90%;
+    padding: 20px;
+  }
 }
 
 .close {
@@ -65,51 +204,51 @@
   top: 10px;
   right: 15px;
   cursor: pointer;
-  font-size: 24px; /* Aumentando o tamanho do ícone de fechar */
-  color: #e74c3c; /* Cor do ícone de fechar */
+  font-size: 24px;
+  color: #e74c3c;
 }
 
 h2 {
-  text-align: center; /* Centralizando o título */
-  margin-bottom: 30px; /* Aumentando o espaço inferior */
-  color: #2c3e50; /* Cor do título */
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
 }
 
 .form-group {
-  margin-bottom: 15px; /* Espaçamento entre os campos do formulário */
-  text-align: center; /* Centralizando os inputs */
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 label {
   display: block;
-  margin-bottom: 5px; /* Espaço inferior do rótulo */
-  font-weight: bold; /* Peso da fonte */
-  color: #34495e; /* Cor das letras */
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #34495e;
 }
 
 input {
-  width: 100%; /* Largura total dos inputs */
-  padding: 10px; /* Espaçamento interno */
-  border: 1px solid #ccc; /* Borda do input */
-  border-radius: 8px; /* Bordas arredondadas */
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
 .form-actions {
-  display: flex; /* Flexbox para os botões */
-  justify-content: center; /* Centralizando os botões */
-  margin-top: 20px; /* Espaço superior para os botões */
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 button {
-  margin: 0 10px; /* Espaçamento entre os botões */
-  padding: 10px 20px; /* Ajustando o padding */
-  font-size: 16px; /* Tamanho da fonte */
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 16px;
 }
 
 .close-button {
-  background-color: #3498db; /* Cor do botão de fechar */
-  color: white; /* Cor do texto do botão de fechar */
-  border: none; /* Sem borda */
-  border-radius: 4px; /* Bordas arredondadas */
-  cursor: pointer; /* Mão ao passar o mouse */
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }

@@ -1,9 +1,9 @@
-<app-header [tipo]="'predio'" (cadastrar)="abrirModalPredio()"></app-header>
-
+<!-- <app-header [tipo]="'predio'" (cadastrar)="abrirModalParaCadastro()"></app-header> -->
 <div class="modal" [ngClass]="{'open': isModalOpen}">
   <div class="modal-content">
-    <span class="close" (click)="isModalOpen = false">&times;</span>
-    <h2>Cadastrar Prédio</h2>
+    <span class="close" (click)="fecharModal()">&times;</span>
+    
+    <h2>{{ predio.id ? 'Atualizar Prédio' : 'Cadastrar Prédio' }}</h2>
     <form>
       <div class="form-group">
         <label for="nome">Nome:</label>
@@ -16,18 +16,24 @@
       </div>
 
       <div class="form-actions">
-        <button type="button" mat-raised-button color="primary" (click)="submitForm()">Cadastrar</button>
-        <button type="button" class="close-button" (click)="isModalOpen = false">Fechar</button>
+        
+        <button type="button" mat-raised-button color="primary" (click)="submitForm()">
+          {{ predio.id ? 'Atualizar' : 'Cadastrar' }}
+        </button>
+        <button type="button" class="close-button" (click)="fecharModal()">Fechar</button>
       </div>
     </form>
   </div>
 </div>
+
 <div class="predios-container">
+  <div class="header">
+    <img src="/icon-add.png" alt="Adicionar Predio" class="icon-add" (click)="abrirModalParaCadastro()">
+  </div>
   <mat-card *ngFor="let predio of predios"
             class="predio-card"
-            [class.selected]="predio.id === selectedPredioId"
-            (click)="selecionarPredio(predio.id)">
-    <mat-card-content>
+            [class.selected]="predio.id === selectedPredioId">
+    <mat-card-content (click)="selecionarPredio(predio.id)">
       <h3>{{ predio.nome }}</h3>
       <p>{{ predio.bairro }}</p>
       <p *ngIf="predio.elevadores && predio.elevadores.length > 0">
@@ -37,10 +43,15 @@
         Nenhum elevador cadastrado.
       </p>
     </mat-card-content>
+
+    <div class="card-actions">
+      <mat-icon class="icon-button edit-icon" (click)="abrirModalParaEdicao(predio); $event.stopPropagation()">edit</mat-icon>
+      <mat-icon class="icon-button delete-icon" (click)="deletarPredio(predio.id); $event.stopPropagation()">delete</mat-icon>
+    </div>
   </mat-card>
 
   <div *ngIf="!predios || predios.length === 0" class="no-predios-message">
     <p>Nenhum prédio encontrado ou houve um erro ao carregar.</p>
-    <p>Verifique o console para mais detalhes.</p>
+    
   </div>
 </div>

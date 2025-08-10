@@ -19,25 +19,23 @@ export class ElevadorService {
     return this.httpClient.get<Elevador[]>(this.url + '/elevador/'+idPredio+'/listar');
   }
 
-  cadastrarElevadorNoPredio(idPredio: string, elevador: ElevadorRequest): Observable<string>{
-    return this.httpClient.post<string>(this.url+"/elevador/"+idPredio+"/cadastrar", elevador);
+  cadastrarElevadorNoPredio(idPredio: string, elevador: ElevadorRequest): Observable<any>{
+    return this.httpClient.post(this.url+"/elevador/"+idPredio+"/cadastrar", elevador, {responseType: 'text'});
   }  
 
-  buscarElevadorDoPredio(idPredio: string, modelo: string): Observable<string>{
-    return this.httpClient.get<string>(this.url+"/elevador/"+idPredio+"/"+modelo);
+  buscarElevadorDoPredio(idPredio: string, modelo: string): Observable<Elevador[]>{
+    return this.httpClient.get<Elevador[]>(this.url+"/elevador/"+idPredio+"/"+modelo);
   }
 
-  removerElevadorDoPredio(idPredio: string, idElevador: string): Observable<string>{
-    return this.httpClient.delete<string>(this.url+"/elevador/"+idPredio+"/"+idElevador);
+  removerElevadorDoPredio(idPredio: string, idElevador: string): Observable<any>{
+    return this.httpClient.delete(this.url+"/elevador/"+idPredio+"/"+idElevador, { responseType: 'text'});
   }
 
-  editarElevadorDoPredio(idPredio: string, idElevador: string, elevador: ElevadorRequest): Observable<string>{
-    return this.httpClient.put<string>(this.url+"/elevador/"+idPredio+"/"+idElevador, elevador);
+  editarElevadorDoPredio(idPredio: string, idElevador: string, elevador: ElevadorRequest): Observable<any>{
+    return this.httpClient.put(this.url+"/elevador/"+idPredio+"/"+idElevador, elevador, { responseType: 'text'});
   }
 
   gerarRelatorio(idElevador: string): Observable<Blob>{
-    return this.httpClient.get(this.url+"/elevador/"+idElevador+"/relatorio",{
-        responseType: 'blob'
-    });
+    return this.httpClient.get(this.url+"/elevador/"+idElevador+"/relatorio",{ responseType: 'blob' });
   }
 }

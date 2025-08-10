@@ -10,4 +10,4 @@ public class AbeelApplication {
 		SpringApplication.run(AbeelApplication.class, args);
 	}
 
-}
+}	

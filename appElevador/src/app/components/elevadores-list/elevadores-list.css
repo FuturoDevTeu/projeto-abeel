@@ -1,78 +1,392 @@
 .elevadores-page-container {
-  padding: 16px;
-  text-align: center;
-  margin-top: 30px;
+    padding: 16px;
+    text-align: center;
+    margin-top: 30px;
+}
+.header{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+.header .icon-add:hover{
+    transition: 0.8s;
+    transform: scale(1.2);
 }
 
 h2 {
-  margin-bottom: 20px;
-  color: #3f51b5;
+    margin-bottom: 20px;
+    color: #3f51b5;
 }
 
 .elevadores-list-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 28px;
-  padding: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
 }
 
 .elevador-card {
-  width: 360px;
-  height: auto;
-  min-height: 120px;
-  cursor: default;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.25);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 16px;
+    width: 180px;
+    height: auto;
+    min-height: 80px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.25);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    text-align: center;
 }
 
 .elevador-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  z-index: 5;
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-color: #007bff;
+    z-index: 10;
 }
 
-/* Adicione esta classe ao botão no HTML se quiser um margin-top específico */
-/* .back-button {
-  margin-top: 30px;
-} */
+.elevador-card.selected {
+    border-color: #3f51b5;
+    box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
+    transform: translateY(-2px) scale(1.01);
+}
 
+.elevador-card mat-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+}
+
+.elevador-imagem-container {
+    margin: 6px 0;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.elevador-imagem-container img {
+    max-width: 60%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    border-radius: 0;
+}
+
+.elevador-separator {
+    border: 0;
+    height: 1px;
+    background: #ccc;
+    width: 80%;
+    margin: 10px auto;
+}
+
+.elevador-card h3 {
+    font-size: 1.1em;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: 600;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.elevador-card p {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 2px;
+    text-align: center;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding: 0 10px;
+}
+
+.icon-button {
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.edit-icon {
+    color: #3f51b5;
+}
+
+.edit-icon:hover {
+    color: #1a237e;
+    transform: scale(1.1);
+}
+
+.delete-icon {
+    color: #f44336;
+}
+
+.delete-icon:hover {
+    color: #d32f2f;
+    transform: scale(1.1);
+}
+
+.no-elevadores-message {
+    text-align: center;
+    margin-top: 50px;
+    color: #777;
+    font-size: 1.2em;
+}
+
+.no-elevadores-message p {
+    margin-bottom: 10px;
+}
 
 .modal {
-  display: none; /* Oculta o modal por padrão */
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
-  justify-content: center;
-  align-items: center;
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
 }
 
 .modal.open {
-  display: flex; /* Exibe o modal quando aberto */
+    display: flex;
 }
 
 .modal-content {
-  background-color: #fff; /* Cor de fundo do modal */
-  padding: 40px; /* Aumentando o espaço */
-  border-radius: 10px; /* Bordas arredondadas */
-  width: 500px; /* Largura do modal */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra */
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideIn 0.4s ease-out;
+}
+
+.modal-content h2 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 25px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
 }
 
 .close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  cursor: pointer;
-  font-size: 24px; /* Aumentando o tamanho do ícone de fechar */
-  color: #e74c3c; /* Cor do ícone de fechar */
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    cursor: pointer;
+    font-size: 24px;
+    color: #888;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.close:hover {
+    color: #555;
+    transform: scale(1.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+    font-size: 1.1em;
+}
+
+.form-group input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.form-actions .close-button {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.form-actions .close-button:hover {
+    background-color: #e0e0e0;
+    border-color: #bbb;
+}
+
+button[mat-raised-button][color="primary"] {
+    background-color: #28a745 !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 10px 20px;
+    font-size: 1em;
+}
+
+button[mat-raised-button][color="primary"]:hover {
+    background-color: #218838 !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 600px) {
+    .modal-content {
+        padding: 20px;
+        max-width: 95%;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+    }
+
+    .close {
+        font-size: 20px;
+        top: 15px;
+        right: 20px;
+    }
+
+    .form-group label {
+        font-size: 1em;
+    }
+
+    .form-group input[type="text"] {
+        padding: 10px 8px;
+        font-size: 0.9em;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .form-actions button,
+    .form-actions .close-button {
+        width: 100%;
+        font-size: 1em;
+        padding: 12px 15px;
+    }
+
+    .elevadores-list-container {
+        gap: 12px;
+        padding: 10px;
+    }
+
+    .elevador-card {
+        width: 100%;
+        max-width: 180px;
+        height: auto;
+        min-height: 80px;
+        padding: 10px;
+    }
+
+    .elevador-card h3 {
+        font-size: 1.1em;
+        width: 100%;
+    }
+
+    .elevador-card p {
+        font-size: 0.8em;
+    }
+
+    .icon-button {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 992px) {
+    .modal-content {
+        padding: 25px;
+        max-width: 450px;
+    }
+
+    .modal-content h2 {
+        font-size: 1.8em;
+    }
+
+    .form-group input[type="text"] {
+        padding: 11px 9px;
+    }
+
+    .form-actions {
+        gap: 15px;
+    }
+
+    .elevadores-list-container {
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .elevador-card {
+        width: calc(50% - 24px);
+        max-width: 220px;
+        min-height: 100px;
+    }
+}
+
+@media (min-width: 993px) {
+    .modal-content {
+        max-width: 500px;
+    }
+
+    .elevadores-list-container {
+        gap: 16px;
+    }
+
+    .elevador-card {
+        width: 180px;
+        min-height: 80px;
+    }
 }

@@ -15,7 +15,7 @@ export class UserService {
   constructor(private httpClient: HttpClient) { }
 
   logar(login: LoginRequest): Observable<UserAuthenticated>{
-    return this.httpClient.post<UserAuthenticated>(this.url + '/auth/login', login)
+    return this.httpClient.post<UserAuthenticated>(this.url + '/auth/login', login);
   }
   
 }

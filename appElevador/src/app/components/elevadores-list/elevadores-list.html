@@ -1,36 +1,56 @@
-<app-header [tipo]="'elevador'" (cadastrar)="abrirModalElevador()"></app-header>
+<!-- <app-header [tipo]="'elevador'" (cadastrar)="abrirModalParaCadastro()"></app-header> -->
+<div class="content-wrapper">
 
 <div class="modal" [ngClass]="{'open': isModalOpen}">
   <div class="modal-content">
-    <span class="close" (click)="isModalOpen = false">&times;</span>
-    <h2>Cadastrar Prédio</h2>
+    <span class="close" (click)="fecharModal()">&times;</span>
+    <h2>{{ elevador.modelo ? 'Atualizar Elevador' : 'Cadastrar Elevador' }}</h2>
     <form>
       <div class="form-group">
-        <label for="nome">Nome:</label>
-        <input type="text" name="nome" [(ngModel)]="elevador.modelo" required>
+        <label for="modelo">Modelo:</label>
+        <input type="text" name="modelo" [(ngModel)]="elevador.modelo" required>
       </div>
+
       <div class="form-actions">
-        <button type="button" mat-raised-button color="primary" (click)="submitForm()">Cadastrar</button>
-        <button type="button" class="close-button" (click)="isModalOpen = false">Fechar</button>
+        <button type="button" mat-raised-button color="primary" (click)="submitForm()">
+          {{ elevador.modelo ? 'Atualizar' : 'Cadastrar' }}
+        </button>
+        <button type="button" class="close-button" (click)="fecharModal()">Fechar</button>
       </div>
     </form>
   </div>
 </div>
 
-<div class="elevadores-page-container">
-  <h2>Elevadores</h2> 
-
+<div class="elevadores-page-container"> 
+  <div class="header">
+    <img src="/icon-add.png" alt="Cadastrar Elevador" class="icon-add" (click)="abrirModalParaCadastro()">
+  </div>
   <div *ngIf="elevadoresDoPredio && elevadoresDoPredio.length > 0; else noElevadores" class="elevadores-list-container">
-    <mat-card *ngFor="let elevador of elevadoresDoPredio" class="elevador-card">
+    <mat-card *ngFor="let elevador of elevadoresDoPredio"
+              class="elevador-card"
+              [class.selected]="elevador.id === selectedElevadorId">
       <mat-card-content (click)="selecionarElevador(elevador.id)">
-        <p><strong>ID:</strong> {{ elevador.id }}</p>
-        <p><strong>Modelo:</strong> {{ elevador.modelo }}</p>
+        <div class="elevador-imagem-container">
+            <img src="elevador.png" alt="Elevador">
+        </div>
+        <hr class="elevador-separator">
+        <h3>{{ elevador.modelo }}</h3>
       </mat-card-content>
+
+      <div class="card-actions">
+        <mat-icon class="icon-button edit-icon" (click)="abrirModalParaEdicao(elevador); $event.stopPropagation()">edit</mat-icon>
+        <mat-icon class="icon-button delete-icon" (click)="deletarElevador(elevador.id); $event.stopPropagation()">delete</mat-icon>
+      </div>
     </mat-card>
   </div>
   <ng-template #noElevadores>
-    <p>Este prédio não possui elevadores cadastrados ou houve um erro ao carregar.</p>
+    <div class="no-elevadores-message">
+      <p>Este prédio não possui elevadores cadastrados.</p>
+      <p>Use o botão "Cadastrar" para adicionar um novo elevador.</p>
+    </div>
   </ng-template>
 
   <button mat-raised-button color="primary" routerLink="/predios">Voltar para Prédios</button>
+</div>
+
 </div>

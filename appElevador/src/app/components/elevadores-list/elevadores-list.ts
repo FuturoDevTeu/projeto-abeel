@@ -8,6 +8,8 @@ import { ElevadorService } from '../../services/elevador-service';
 import { Header } from "../header/header";
 import { FormsModule } from '@angular/forms';
 import { ElevadorRequest } from '../../types/ElevadorRequest';
+import { MatIconModule } from '@angular/material/icon';
+import { Footer } from "../footer/footer";
 
 @Component({
   selector: 'app-elevadores',
@@ -18,7 +20,9 @@ import { ElevadorRequest } from '../../types/ElevadorRequest';
     RouterLink,
     MatButtonModule,
     FormsModule,
-    Header
+    MatIconModule,
+    Header,
+    Footer
 ],
   templateUrl: './elevadores-list.html',
   styleUrl: './elevadores-list.css'
@@ -28,8 +32,8 @@ export class ElevadoresComponent implements OnInit {
   predioId: string | null = null;
   elevadoresDoPredio: Elevador[] = [];
   isModalOpen = false;
-  elevador: ElevadorRequest = {modelo: "", componente: []};
-  idElevadorSelecionado = "";
+  elevador: Elevador | ElevadorRequest = {modelo: "", componente: []};
+  selectedElevadorId = "";
 
   constructor(
     private route: ActivatedRoute,
@@ -37,21 +41,45 @@ export class ElevadoresComponent implements OnInit {
     private elevadorService: ElevadorService,
     private cdr: ChangeDetectorRef
   ) { }
- 
-  abrirModalElevador(){
+  
+  // Abre o modal para cadastrar um novo elevador.
+  abrirModalParaCadastro(): void {
+    this.elevador = { modelo: "", componente: [] };
+    this.isModalOpen = true;
+  }
+  
+  // Abre o modal para editar um elevador existente.
+  abrirModalParaEdicao(elevador: Elevador): void {
+    this.elevador = { ...elevador };
     this.isModalOpen = true;
   }
 
-  submitForm(){
-    if(this.elevador.modelo){
-      if(this.predioId != null){
-        this.cadastrarElevadorNoPredio(this.predioId, this.elevador);
-        this.elevador.modelo = "";
-        this.isModalOpen = false;
+  // Fecha o modal e limpa o formulário.
+  fecharModal(): void {
+    this.isModalOpen = false;
+    this.elevador = { modelo: "", componente: [] };
+  }
+
+  // Submete o formulário, criando ou atualizando um elevador.
+  submitForm(): void {
+    if (!this.elevador.modelo) {
+      console.error("O modelo do elevador é obrigatório.");
+      return;
+    }
+    
+    if (this.predioId) {
+      if ('id' in this.elevador) {
+        this.editarElevadorNoPredio(this.predioId, this.elevador.id, this.elevador);
+      } else {
+        this.cadastrarElevadorNoPredio(this.predioId, this.elevador as ElevadorRequest);
       }
+      this.fecharModal();
+    } else {
+      console.error('ID do prédio não está disponível.');
     }
   }
 
+  // Inicializa o componente ao carregar a página.
   ngOnInit(): void {
     this.predioId = this.route.snapshot.paramMap.get('id');
 
@@ -64,12 +92,13 @@ export class ElevadoresComponent implements OnInit {
     }
   }
 
+  // Carrega a lista de elevadores para um prédio específico.
   carregarElevadoresDoPredio(idPredio: string): void {
     this.elevadoresDoPredio = [];
 
     this.elevadorService.carregarElevadoresDoPredio(idPredio).subscribe({
-      next: (elevador) => {
-        this.elevadoresDoPredio = Array.from(elevador);
+      next: (elevadores) => {
+        this.elevadoresDoPredio = elevadores;
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -80,18 +109,68 @@ export class ElevadoresComponent implements OnInit {
     });
   }
 
-  cadastrarElevadorNoPredio(idPredio: string, elevador: ElevadorRequest){
+  // Envia uma requisição para cadastrar um novo elevador.
+  cadastrarElevadorNoPredio(idPredio: string, elevador: ElevadorRequest): void {
     this.elevadorService.cadastrarElevadorNoPredio(idPredio, elevador)
     .subscribe({
       next: (res) => {
-        console.log(res);
-        this.cdr.detectChanges();
+        console.log('Elevador cadastrado com sucesso:', res);
+        this.carregarElevadoresDoPredio(idPredio);
       },
-      error: (err) =>{
-        console.error(err);
-      },
-    })
+      error: (err) => {
+        if(typeof err.error === 'string'){
+            window.alert(err.error);
+            this.cdr.detectChanges();
+          }else{
+            window.alert("Ocorreu um erro inesperado ");
+          } 
+        }
+    });
   }
+
+  // Envia uma requisição para editar um elevador existente.
+  editarElevadorNoPredio(idPredio: string, idElevador: string, elevador: Elevador | ElevadorRequest): void {
+    this.elevadorService.editarElevadorDoPredio(idPredio, idElevador, elevador)
+    .subscribe({
+      next: (res) => {
+        console.log('Elevador editado com sucesso:', res);
+        this.carregarElevadoresDoPredio(idPredio);
+      },
+      error: (err) => {
+        if(typeof err.error === 'string'){
+            window.alert(err.error);
+            this.cdr.detectChanges();
+          }else{
+            window.alert("Ocorreu um erro inesperado ");
+          } 
+        }
+    });
+  }
+
+  // Envia uma requisição para deletar um elevador.
+  deletarElevador(idElevador: string): void {
+    if (this.predioId) {
+      if (window.confirm('Tem certeza que deseja deletar este elevador?')) {
+        this.elevadorService.removerElevadorDoPredio(this.predioId, idElevador)
+        .subscribe({
+          next: () => {
+            console.log('Elevador removido com sucesso.');
+            this.carregarElevadoresDoPredio(this.predioId!);
+          },
+          error: (err) => {
+            if(typeof err.error === 'string'){
+              window.alert(err.error);
+              this.cdr.detectChanges();
+           }else{
+              window.alert("Ocorreu um erro inesperado ");
+            } 
+          }
+        });
+      }
+    }
+  }
+
+  // Busca um elevador pelo seu modelo.
   buscarElevadorNoPredio(idPredio: string, modelo: string){
     this.elevadorService.buscarElevadorDoPredio(idPredio, modelo)
     .subscribe({
@@ -104,31 +183,8 @@ export class ElevadoresComponent implements OnInit {
       },
     })
   }
-  removerElevadorNoPredio(idPredio: string, idElevador: string){
-    this.elevadorService.removerElevadorDoPredio(idPredio, idElevador)
-    .subscribe({
-      next: (res) => {
-        console.log(res);
-        this.cdr.detectChanges();
-      },
-      error: (err) =>{
-        console.error(err);
-      },
-    })
-  }
-  editarElevadorNoPredio(idPredio: string, idElevador: string, elevador: ElevadorRequest){
-    this.elevadorService.editarElevadorDoPredio(idPredio, idElevador, elevador)
-    .subscribe({
-      next: (res) => {
-        console.log(res);
-        this.cdr.detectChanges();
-      },
-      error: (err) =>{
-        console.error(err);
-      },
-    })
-  }
-
+  
+  // Envia uma requisição para gerar um relatório em PDF.
   gerarRelatorio(idElevador: string){
     this.elevadorService.gerarRelatorio(idElevador)
     .subscribe({
@@ -145,10 +201,11 @@ export class ElevadoresComponent implements OnInit {
       },
     })
   }
-  selecionarElevador(idElevador: string){
-    this.idElevadorSelecionado = idElevador;
-    console.log(this.idElevadorSelecionado)
-    this.router.navigate(['/componentes', this.idElevadorSelecionado]);
-  }
 
+  // Navega para a tela de componentes de um elevador selecionado.
+  selecionarElevador(idElevador: string){
+    this.selectedElevadorId = idElevador;
+    console.log(this.selectedElevadorId)
+    this.router.navigate(['/componentes', this.selectedElevadorId]);
+  }
 }

@@ -23,7 +23,7 @@
       return this.httpClient.get<Componente[]>(this.url+"/componente/"+idElevador+"/"+nome);
     }
 
-    cadastrarComponenteNoElevador(idElevador: string, componente: ComponenteRequest): Observable<string>{
+    cadastrarComponenteNoElevador(idElevador: string, componente: ComponenteRequest): Observable<any>{
       const formData = new FormData();
 
       formData.append("nome", componente.nome);
@@ -34,7 +34,7 @@
       if(componente.imagem){
         formData.append('imagem', componente.imagem, componente.imagem.name);
       }
-      return this.httpClient.post<string>(this.url+"/componente/"+idElevador+"/cadastrar", formData);   
+      return this.httpClient.post(this.url+"/componente/"+idElevador+"/cadastrar", formData, {responseType: 'text'});   
     }
 
     deletarComponenteDoElevador(idElevador: string, idComponente: string): Observable<string>{

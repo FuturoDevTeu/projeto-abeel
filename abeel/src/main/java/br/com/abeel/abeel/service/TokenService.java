@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,14 +36,14 @@ public class TokenService {
     private ResponseEntity<?> verificarLogin(LoginEntradaDto dto) {
         var optionalUser = ur.findByUsername(dto.username());
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login ou senha inválidos");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Login ou senha inválidos"));
         }
 
         var user = optionalUser.get();
         var senha = passwordEncoder.matches(dto.password(), user.getPassword());
 
         if (!senha) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login ou senha inválidos");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Login ou senha inválidos"));
         }
 
         return ResponseEntity.ok(user);

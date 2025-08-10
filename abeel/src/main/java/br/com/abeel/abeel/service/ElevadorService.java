@@ -25,6 +25,7 @@ import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -43,9 +44,9 @@ public class ElevadorService {
 
     private ResponseEntity<?> validarCampos(ElevadorEntradaDto dto){
 
-        if(dto.modelo() == null || dto.modelo().trim().isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Modelo está em branco");
+        if(dto.modelo() == null || dto.modelo().trim().isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Modelo está em branco"));
 
-        if(!dto.modelo().matches("^[\\p{L}\\p{N} ]{3,}$")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Modelo inválido");
+        if(!dto.modelo().matches("^[\\p{L}\\p{N} ]{3,}$")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Modelo inválido"));
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -53,7 +54,7 @@ public class ElevadorService {
     private ResponseEntity<?> validarPredio(UUID idPredio){
         var predioOptional = pr.findById(idPredio);
 
-        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prédio não encontrado");
+        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Prédio não encontrado"));
 
         return ResponseEntity.status(HttpStatus.OK).body(predioOptional.get());
     }
@@ -61,17 +62,17 @@ public class ElevadorService {
     private ResponseEntity<?> validarElevadorPredio(UUID idPredio, UUID idElevaodr){
         var predioOptional = pr.findById(idPredio);
 
-        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prédio não encontrado");
+        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Prédio não encontrado"));
 
         var elevadorOptional = er.findByIdAndPredio(idElevaodr, predioOptional.get());
-        if(elevadorOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Elevador não encontrado");
+        if(elevadorOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
 
         return ResponseEntity.status(HttpStatus.OK).body(elevadorOptional.get());
     }
     public ResponseEntity<?> validarElevador(UUID idElevador){
         var elevadorOptional = er.findById(idElevador);
 
-        if(elevadorOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Elevador não encontrado");
+        if(elevadorOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
         return ResponseEntity.ok().body(elevadorOptional.get());
     }
     public ResponseEntity<?> cadastrar(UUID idPredio, ElevadorEntradaDto dto){
