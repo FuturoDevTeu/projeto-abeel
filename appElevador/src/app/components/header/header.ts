@@ -1,4 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatToolbar } from "@angular/material/toolbar";
 
 @Component({
@@ -6,7 +8,7 @@ import { MatToolbar } from "@angular/material/toolbar";
   standalone: true,
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
-  imports: [MatToolbar]
+  imports: [MatToolbar, MatButtonModule, MatIconModule]
 })
 export class Header {
   @Input() tipo: 'predio' | 'elevador' = 'predio';

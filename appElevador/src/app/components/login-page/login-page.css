@@ -1,0 +1,117 @@
+/* ==================================== */
+/* ESTILOS GERAIS E PARA MOBILE (DEFAULT) */
+/* ==================================== */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #fff; /* Alterado de #f0f2f5 para #fff */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-box {
+  background-color: #fff;
+  padding: 30px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 350px;
+}
+
+.logo {
+  margin-bottom: 25px;
+}
+
+.logo img {
+  max-width: 120px;
+  height: auto;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+  color: #a0a0a0;
+}
+
+.btn-entrar {
+  width: 100%;
+  padding: 12px;
+  background-color: #2e8b57;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+.btn-entrar:hover {
+  background-color: #246a44;
+}
+
+/* ==================================== */
+/* MEDIA QUERY PARA TABLETS (min-width: 768px) */
+/* ==================================== */
+@media (min-width: 768px) {
+  .login-box {
+    padding: 40px;
+    max-width: 400px;
+  }
+
+  .logo {
+    margin-bottom: 30px;
+  }
+
+  .logo img {
+    max-width: 150px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    font-size: 16px;
+  }
+
+  .form-group input {
+    padding: 12px 15px;
+  }
+
+  .btn-entrar {
+    font-size: 18px;
+  }
+}
+
+/* ==================================== */
+/* MEDIA QUERY PARA DESKTOPS (min-width: 1024px) */
+/* ==================================== */
+@media (min-width: 1024px) {
+  .login-box {
+    max-width: 450px;
+  }
+}

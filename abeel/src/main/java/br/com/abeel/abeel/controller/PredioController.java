@@ -37,7 +37,7 @@ public class PredioController {
     }
 
     @PutMapping("/editar/{idPredio}")
-    private ResponseEntity<?> editar(@PathVariable("/idPredio") UUID idPredio, @RequestBody PredioEntradaDto dto){
+    private ResponseEntity<?> editar(@PathVariable("idPredio") UUID idPredio, @RequestBody PredioEntradaDto dto){
         return ps.editar(dto, idPredio);
     }
 }

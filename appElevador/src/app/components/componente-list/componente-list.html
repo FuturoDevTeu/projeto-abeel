@@ -1,41 +1,96 @@
-<div>
+<div class="checklist-container">
+  <div class="page-header">
     <h2>Checklist</h2>
-    <button (click)="gerarRelatorio()">Gerar relatorio</button>
-</div>
+    <div class="box-button">
+      <button (click)="voltarElevador()">Voltar para elevador</button>
+      <button class="btn btn-primary" (click)="gerarRelatorio()">Gerar relatório</button>
+    </div>
+  </div>
 
-<table>
-    <tr>
-        <th>Nome</th>
-        <th>Situacao</th>
-        <th>Imagem</th>
-        <th>Observação</th>
-    </tr>
-    <tr *ngFor="let componente of componentes">
-        <td>{{ componente.nome }}</td>
-        <td>{{ componente.situacao ? "Bom" : "Ruim"}}</td>
-        <td>
-            <img *ngIf="componente.imagemBase64" [src]="componente.imagemBase64" width="100">
-        </td>
-        <td>{{ componente.observacao}}</td>
-    </tr>
-</table>
-<input type="text" placeholder="Insira o nome" [(ngModel)]="componenteRequest.nome">
-<label>
-    <input type="radio" name="situacao" [(ngModel)]="componenteRequest.situacao" [value]="true">
-    Bom
-</label>
-<label>
-    <input type="radio" name="situacao" [(ngModel)]="componenteRequest.situacao" [value]="false">
-    Ruim
-</label>
-<input type="file" placeholder="Insira a imagem" (change)="arquivoSelecionado($event)">
-<input type="text" placeholder="Insira a Observação" [(ngModel)]="componenteRequest.observacao">
-<label>
-    <input type="radio" name="padrao" [(ngModel)]="componenteRequest.hePadrao" [value]="true">
-    Padrão
-</label>
-<label>
-    <input type="radio" name="padrao" [(ngModel)]="componenteRequest.hePadrao" [value]="false">
-    Não padrão
-</label>
-<button type="button" (click)="cadastrarComponente(elevadorId!, componenteRequest)">cadastrar</button>
+  <div class="table-responsive">
+    <table class="componente-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Situação</th>
+          <th>Imagem</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let componente of componentes">
+          <td>{{ componente.nome }}</td>
+          <td>
+            <span [class.situacao-bom]="componente.situacao" [class.situacao-ruim]="!componente.situacao">
+              {{ componente.situacao ? "Bom" : "Ruim"}}
+            </span>
+          </td>
+          <td>
+            <img *ngIf="componente.imagemBase64" [src]="componente.imagemBase64" alt="Imagem do componente" class="component-image">
+          </td>
+          <td>{{ componente.observacao ? componente.observacao : "Não há observação"}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-card">
+    <div class="form-title">
+      <h3>Adicionar novo componente</h3>
+    </div>
+    <div class="form-content">
+      <div class="input-group">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" placeholder="Insira o nome" [(ngModel)]="componenteRequest.nome" class="text-input">
+      </div>
+
+      <div class="input-group conditional-field-animation" 
+           [class.show]="!componenteRequest.situacao" 
+           *ngIf="!componenteRequest.situacao">
+        <label for="observacao">Observação:</label>
+        <input type="text" id="observacao" placeholder="Insira a Observação" [(ngModel)]="componenteRequest.observacao" class="text-input">
+      </div>
+      
+      <div class="input-group conditional-field-animation" 
+           [class.show]="!componenteRequest.situacao" 
+           *ngIf="!componenteRequest.situacao">
+        <label for="imagem">Imagem:</label>
+        <input type="file" id="imagem" (change)="arquivoSelecionado($event)" class="file-input">
+      </div>
+
+      <div class="radio-group-wrapper">
+        <div class="input-group radio-group">
+          <label>Situação:</label>
+          <div class="radio-options-container">
+            <label class="radio-option">
+              <input type="radio" name="situacao" [(ngModel)]="componenteRequest.situacao" [value]="true">
+              <span>Bom</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="situacao" [(ngModel)]="componenteRequest.situacao" [value]="false">
+              <span>Ruim</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="input-group radio-group">
+          <label>Padrão:</label>
+          <div class="radio-options-container">
+            <label class="radio-option">
+              <input type="radio" name="padrao" [(ngModel)]="componenteRequest.hePadrao" [value]="true">
+              <span>Padrão</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="padrao" [(ngModel)]="componenteRequest.hePadrao" [value]="false">
+              <span>Não padrão</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      </div>
+    
+    <button type="button" class="btn btn-accent" (click)="cadastrarComponente(elevadorId!, componenteRequest)">
+      Cadastrar
+    </button>
+  </div>
+</div>

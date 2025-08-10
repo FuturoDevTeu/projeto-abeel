@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.lang.Nullable; // <--- Importe esta anotação
 
 import java.util.UUID;
 
@@ -22,10 +23,11 @@ public class ComponenteController {
             @PathVariable("idElevador") UUID idElevador,
             @RequestParam("nome") String nome,
             @RequestParam("situacao") boolean situacao,
-            @RequestParam("imagem") MultipartFile imagem,
+            @RequestParam(value = "imagem", required = false) @Nullable MultipartFile imagem,
             @RequestParam("observacao") String observacao,
             @RequestParam("hePadrao") boolean hePadrao
     ){
+        
         return cs.cadastrar(idElevador, nome, situacao, imagem, observacao, hePadrao);
     }
 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -21,17 +22,17 @@ public class PredioService {
     private PredioRepository pr;
 
     private ResponseEntity<?> validarCampos(PredioEntradaDto dto, String acao, UUID idPredio){
-        if(dto.nome() == null || dto.nome().trim().isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nome está em branco");
-        if(dto.bairro() == null || dto.bairro().trim().isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bairro está em branco");
+        if(dto.nome() == null || dto.nome().trim().isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome está em branco"));
+        if(dto.bairro() == null || dto.bairro().trim().isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Bairro está em branco"));
 
-        if(!dto.nome().matches("^[\\p{L} ]{3,}$")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nome inválido");
-        if(!dto.bairro().matches("^[\\p{L} ]{3,}$")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bairro inválido");
+        if(!dto.nome().matches("^[\\p{L} ]{3,}$")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome inválido"));
+        if(!dto.bairro().matches("^[\\p{L} ]{3,}$")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Bairro inválido"));
 
         if(acao.equals("cadastrar")){
-            if(pr.findByNomeAndBairro(dto.nome(), dto.bairro()).isPresent()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este prédio já existe");
+            if(pr.findByNomeAndBairro(dto.nome(), dto.bairro()).isPresent()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Este prédio já existe"));
         }
         if(acao.equals("editar")){
-            if (pr.findByNomeAndBairroAndIdNot(dto.nome(),dto.bairro(), idPredio).isPresent()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Já existe um prédio com esse nome e bairro");
+            if (pr.findByNomeAndBairroAndIdNot(dto.nome(),dto.bairro(), idPredio).isPresent()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Já existe um prédio com esse nome e bairro"));
         }
 
         return ResponseEntity.ok().build();
@@ -40,7 +41,7 @@ public class PredioService {
     private ResponseEntity<?> validarPredio(UUID idPredio){
         var predioOptional = pr.findById(idPredio);
 
-        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prédio não encontrado");
+        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Prédio não encontrado"));
 
         return ResponseEntity.status(HttpStatus.OK).body(predioOptional.get());
     }
@@ -92,7 +93,7 @@ public class PredioService {
     public ResponseEntity<?> remover(UUID idPredio){
         var predioOptional = pr.findById(idPredio);
 
-        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prédio não encontrado");
+        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Prédio não encontrado"));
 
         var predio = predioOptional.get();
         pr.delete(predio);
