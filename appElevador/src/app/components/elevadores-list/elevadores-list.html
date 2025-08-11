@@ -45,9 +45,9 @@
     </mat-card>
   </div>
   <ng-template #noElevadores>
-    <div class="no-elevadores-message">
-      <p>Este prédio não possui elevadores cadastrados.</p>
-      <p>Use o botão "Cadastrar" para adicionar um novo elevador.</p>
+    <div *ngIf="messagem" class="no-elevadores-message">
+      <p>{{ messagem }}</p>
+      <div *ngIf="estaCarregando" class="spinner"></div>
     </div>
   </ng-template>
 

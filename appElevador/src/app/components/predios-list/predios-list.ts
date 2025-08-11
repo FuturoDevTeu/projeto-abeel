@@ -23,6 +23,8 @@ export class PrediosList implements OnInit {
   isModalOpen = false;
   // O objeto 'predio' agora é usado para cadastro e edição
   predio: Predio = { id: '', nome: '', bairro: '' };
+  estaCarregando: boolean = false;
+  mensagem: string = "";
 
   constructor(
     private router: Router,
@@ -68,16 +70,26 @@ export class PrediosList implements OnInit {
   }
 
   carregarPredios(): void {
+    this.estaCarregando = true;
+    this.mensagem = "Carregando predios, por favor espere...";
     this.predioService.obterPredios()
       .subscribe({
         next: (predios) => {
           this.predios = Array.from(predios);
+          if(this.predios.length === 0){
+            this.mensagem = "Nenhum predio encontrado";
+          }else{
+            this.mensagem = '';
+          }
+          this.estaCarregando = false;
           this.selectedPredioId = null;
           this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Erro ao carregar prédios', error);
           this.predios = [];
+          this.estaCarregando = false;
+          this.mensagem = 'Erro ao carregar prédios';
           this.cdr.detectChanges();
         }
       });
@@ -109,16 +121,26 @@ export class PrediosList implements OnInit {
       this.carregarPredios();
       return;
     }
+    this.estaCarregando = true;
+    this.mensagem = "Carregando prédios, por favor espere..."
     
     this.predioService.buscarPredio(nomePredio)
-      .subscribe({
+    .subscribe({
         next: (predios) => {
           this.predios = Array.from(predios);
+          if(this.predios.length === 0){
+            this.mensagem = "Nenhum prédio encontrado";
+          }else{
+            this.mensagem = '';
+          }
+          this.estaCarregando = false;
           this.selectedPredioId = null;
           this.cdr.detectChanges();
         },
         error: (err) => {
           console.error(err);
+          this.mensagem = "Erro ao buscar prédios";
+          this.estaCarregando = false;
           this.cdr.detectChanges();
         }
       });

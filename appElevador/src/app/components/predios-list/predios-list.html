@@ -51,8 +51,8 @@
     </div>
   </mat-card>
 
-  <div *ngIf="!predios || predios.length === 0" class="no-predios-message">
-    <p>Nenhum prédio encontrado ou houve um erro ao carregar.</p>
-    
+  <div *ngIf="mensagem" class="no-predios-message">
+    <p>{{mensagem}}</p>
+    <div *ngIf="estaCarregando" class="spinner"></div>
   </div>
 </div>

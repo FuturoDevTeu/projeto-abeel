@@ -30,6 +30,8 @@ export class ElevadoresComponent implements OnInit {
   isModalOpen = false;
   elevador: Elevador | ElevadorRequest = {modelo: "", componente: []};
   selectedElevadorId = "";
+  estaCarregando: boolean = false;
+  messagem: string = "";
 
   constructor(
     private route: ActivatedRoute,
@@ -92,15 +94,26 @@ export class ElevadoresComponent implements OnInit {
   // Carrega a lista de elevadores para um prédio específico.
   carregarElevadoresDoPredio(idPredio: string): void {
     this.elevadoresDoPredio = [];
-
+    this.estaCarregando = true;
+    this.messagem = "Carregando elevadores, por favor espere...";
+    
     this.elevadorService.carregarElevadoresDoPredio(idPredio).subscribe({
       next: (elevadores) => {
+        if(elevadores.length === 0){
+          this.messagem = "Nenhum elevador encontrado";
+          this.estaCarregando = false;
+        }else{
+          this.messagem = "";
+          this.estaCarregando = false;
+        }
         this.elevadoresDoPredio = elevadores;
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error(`Erro ao carregar elevadores para o prédio ${idPredio}:`, error);
+        console.error("Erro ao carregar elevador: "+ error.error);
         this.elevadoresDoPredio = [];
+        this.messagem = "Ocorreu um erro ao carregar elevadores";
+        this.estaCarregando = false;
         this.cdr.detectChanges();
       }
     });
@@ -175,15 +188,26 @@ export class ElevadoresComponent implements OnInit {
       this.carregarElevadoresDoPredio(this.predioId!);
       return;
     }
+    this.messagem = "Carregando elevadores, por favor espere...";
+    this.estaCarregando = true;
     this.elevadorService.buscarElevadorDoPredio(this.predioId!, modelo)
     .subscribe({
       next: (res) => {
-        console.log(res);
+        if(res.length === 0){
+          this.messagem = "Nenhum elevador encontrado";
+          this.estaCarregando = false;
+        }else{
+          this.messagem = "";
+          this.estaCarregando = false
+        }
         this.elevadoresDoPredio = Array.from(res);
         this.cdr.detectChanges();
       },
       error: (err) =>{
         console.error(err.error);
+        this.cdr.detectChanges();
+        this.messagem = "Erro ao carregar elevadores";
+        this.estaCarregando = false;
       },
     })
   }
