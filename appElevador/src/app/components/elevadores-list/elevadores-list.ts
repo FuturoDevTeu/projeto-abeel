@@ -5,11 +5,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { Elevador } from '../../types/Elevador';
 import { ElevadorService } from '../../services/elevador-service';
-import { Header } from "../header/header";
 import { FormsModule } from '@angular/forms';
 import { ElevadorRequest } from '../../types/ElevadorRequest';
 import { MatIconModule } from '@angular/material/icon';
-import { Footer } from "../footer/footer";
 
 @Component({
   selector: 'app-elevadores',
@@ -21,8 +19,6 @@ import { Footer } from "../footer/footer";
     MatButtonModule,
     FormsModule,
     MatIconModule,
-    Header,
-    Footer
 ],
   templateUrl: './elevadores-list.html',
   styleUrl: './elevadores-list.css'
@@ -82,6 +78,7 @@ export class ElevadoresComponent implements OnInit {
   // Inicializa o componente ao carregar a página.
   ngOnInit(): void {
     this.predioId = this.route.snapshot.paramMap.get('id');
+    console.log("Id do predio: "+ this.predioId);
 
     if (this.predioId) {
       this.carregarElevadoresDoPredio(this.predioId);
@@ -171,19 +168,25 @@ export class ElevadoresComponent implements OnInit {
   }
 
   // Busca um elevador pelo seu modelo.
-  buscarElevadorNoPredio(idPredio: string, modelo: string){
-    this.elevadorService.buscarElevadorDoPredio(idPredio, modelo)
+  buscarElevadorNoPredio(evento: Event){
+    const input = evento.target as HTMLInputElement;
+    const modelo = input.value
+    if(!modelo){
+      this.carregarElevadoresDoPredio(this.predioId!);
+      return;
+    }
+    this.elevadorService.buscarElevadorDoPredio(this.predioId!, modelo)
     .subscribe({
       next: (res) => {
         console.log(res);
+        this.elevadoresDoPredio = Array.from(res);
         this.cdr.detectChanges();
       },
       error: (err) =>{
-        console.error(err);
+        console.error(err.error);
       },
     })
   }
-  
   // Envia uma requisição para gerar um relatório em PDF.
   gerarRelatorio(idElevador: string){
     this.elevadorService.gerarRelatorio(idElevador)

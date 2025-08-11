@@ -2,7 +2,9 @@ package br.com.abeel.abeel.repository;
 
 import br.com.abeel.abeel.entity.Elevador;
 import br.com.abeel.abeel.entity.Predio;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,4 +22,6 @@ public interface ElevadorRepository extends CrudRepository<Elevador, UUID> {
 
     Optional<Elevador> findByModeloAndIdNot(String modelo, UUID idElevador);
 
+    @Query(value = "SELECT * FROM tb_elevador WHERE elevador_id = :id", nativeQuery = true)
+    Optional<Elevador> findByIdBinary(@Param("id") byte[] id);
 }

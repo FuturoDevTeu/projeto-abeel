@@ -4,17 +4,15 @@ import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { PredioService } from '../../services/predio-service';
 import { Predio } from '../../types/Predio';
-import { Header } from "../header/header";
 import { PredioRequest } from '../../types/PredioRequest';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Footer } from "../footer/footer";
 
 @Component({
   selector: 'app-predios-list',
   standalone: true,
-  imports: [MatCardModule, CommonModule, FormsModule, MatIconModule, MatButtonModule, Header, Footer],
+  imports: [MatCardModule, CommonModule, FormsModule, MatIconModule, MatButtonModule],
   templateUrl: './predios-list.html',
   styleUrls: ['./predios-list.css']
 })
@@ -104,11 +102,19 @@ export class PrediosList implements OnInit {
       });
   }
 
-  buscarPredio(nomePredio: string): void {
+  buscarPredio(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const nomePredio = input.value
+    if(!nomePredio){
+      this.carregarPredios();
+      return;
+    }
+    
     this.predioService.buscarPredio(nomePredio)
       .subscribe({
         next: (predios) => {
           this.predios = Array.from(predios);
+          this.selectedPredioId = null;
           this.cdr.detectChanges();
         },
         error: (err) => {

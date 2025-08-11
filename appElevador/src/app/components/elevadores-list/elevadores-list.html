@@ -23,6 +23,7 @@
 
 <div class="elevadores-page-container"> 
   <div class="header">
+    <input placeholder="Digite o modelo do elevador" (keyup)="buscarElevadorNoPredio($event)">
     <img src="/icon-add.png" alt="Cadastrar Elevador" class="icon-add" (click)="abrirModalParaCadastro()">
   </div>
   <div *ngIf="elevadoresDoPredio && elevadoresDoPredio.length > 0; else noElevadores" class="elevadores-list-container">

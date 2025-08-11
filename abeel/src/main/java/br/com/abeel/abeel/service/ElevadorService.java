@@ -3,6 +3,7 @@ package br.com.abeel.abeel.service;
 import br.com.abeel.abeel.controller.dto.ComponenteEntradaDto;
 import br.com.abeel.abeel.controller.dto.ElevadorEntradaDto;
 import br.com.abeel.abeel.controller.dto.ElevadorSaidaDto;
+import br.com.abeel.abeel.converter.UUIDConverter;
 import br.com.abeel.abeel.entity.Componente;
 import br.com.abeel.abeel.entity.Elevador;
 import br.com.abeel.abeel.entity.Predio;
@@ -70,10 +71,17 @@ public class ElevadorService {
         return ResponseEntity.status(HttpStatus.OK).body(elevadorOptional.get());
     }
     public ResponseEntity<?> validarElevador(UUID idElevador){
-        var elevadorOptional = er.findById(idElevador);
+        byte[] idBytes = UUIDConverter.toBytes(idElevador);
+        var elevadorOptional = er.findByIdBinary(idBytes);
+        System.out.println("O id do elevador na função do back: "+ idElevador);
 
         if(elevadorOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
-        return ResponseEntity.ok().body(elevadorOptional.get());
+
+        Elevador elevador = elevadorOptional.get();
+
+        ElevadorSaidaDto dto = new ElevadorSaidaDto(elevador);
+
+        return ResponseEntity.ok().body(dto);
     }
     public ResponseEntity<?> cadastrar(UUID idPredio, ElevadorEntradaDto dto){
         ResponseEntity<?> respostaPredio = validarPredio(idPredio);
@@ -132,7 +140,7 @@ public class ElevadorService {
                         componente.isHePadrao()
                         ));
             }
-            dtoList.add(new ElevadorSaidaDto(elevador.getId(), elevador.getModelo(), listComponente));
+            dtoList.add(new ElevadorSaidaDto(elevador.getId(), elevador.getModelo(), listComponente, elevador.getPredio().getId()));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(dtoList);
@@ -158,9 +166,17 @@ public class ElevadorService {
                         componente.isHePadrao()
                         ));
             }
-            dtoList.add(new ElevadorSaidaDto(elevador.getId(), elevador.getModelo(), listaComponente));
+            dtoList.add(new ElevadorSaidaDto(elevador.getId(), elevador.getModelo(), listaComponente, elevador.getPredio().getId()));
         }
         return ResponseEntity.status(HttpStatus.OK).body(dtoList);
+    }
+
+    public ResponseEntity<?> buscarId(UUID idElevador){
+        ResponseEntity<?>  resposta = validarElevador(idElevador);
+
+        if(resposta.getStatusCode() != HttpStatus.OK) return resposta;
+        var elevador = (ElevadorSaidaDto) resposta.getBody();
+        return ResponseEntity.ok().body(elevador);
     }
 
     public ResponseEntity<?> remover(UUID idPredio, UUID idElevador){
