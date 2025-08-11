@@ -1,5 +1,8 @@
 package br.com.abeel.abeel.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +22,7 @@ import java.util.UUID;
 public class Elevador {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "elevador_id")
+    @Column(name = "elevador_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
     @Column(name = "modelo", nullable = false)
@@ -30,6 +33,7 @@ public class Elevador {
     private Predio predio;
 
     @OneToMany(mappedBy = "elevador", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("componentes")
     private List<Componente> componentes;
 
     public Elevador(String modelo, Predio predio, List<Componente> componentes) {

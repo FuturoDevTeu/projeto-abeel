@@ -37,11 +37,11 @@
       return this.httpClient.post(this.url+"/componente/"+idElevador+"/cadastrar", formData, {responseType: 'text'});   
     }
 
-    deletarComponenteDoElevador(idElevador: string, idComponente: string): Observable<string>{
-      return this.httpClient.delete<string>(this.url+"/componente/"+idElevador+"/"+idComponente);
+    deletarComponenteDoElevador(idElevador: string, idComponente: string): Observable<any>{
+      return this.httpClient.delete(this.url+"/componente/"+idElevador+"/"+idComponente, {responseType: "text"});
     }
 
-    editarComponenteDoElevador(idElevador: string, idComponente: string, componente: ComponenteRequest): Observable<string>{
-      return this.httpClient.put<string>(this.url+"/componente/"+idElevador+"/"+idComponente, componente);
+    editarComponenteDoElevador(idElevador: string, idComponente: string, componente: ComponenteRequest): Observable<any>{
+      return this.httpClient.put(this.url+"/componente/"+idElevador+"/"+idComponente, componente, {responseType: 'text'});
     }
   }

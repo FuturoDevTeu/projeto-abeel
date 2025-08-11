@@ -31,6 +31,11 @@ public class ElevadorController {
     private ResponseEntity<?> buscar(@PathVariable("idPredio") UUID idPredio, @PathVariable String modelo){
         return es.buscar(idPredio, modelo);
     }
+    @GetMapping("/{idElevador}/buscar")
+    private ResponseEntity<?> buscarId(@PathVariable("idElevador") UUID idElevador){
+        System.out.println("O id do front chegou: "+ idElevador);
+        return es.buscarId(idElevador);
+    }
 
     @DeleteMapping("/{idPredio}/{idElevador}")
     private ResponseEntity<?> remover(@PathVariable("idPredio") UUID idPredio, @PathVariable("idElevador") UUID idElevador){

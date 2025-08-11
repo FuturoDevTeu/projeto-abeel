@@ -6,13 +6,14 @@ import { ComponenteService } from '../../services/componente-service';
 import { FormsModule } from '@angular/forms';
 import { ComponenteRequest } from '../../types/ComponenteRequest';
 import { ElevadorService } from '../../services/elevador-service';
-import { Footer } from "../footer/footer";
-import { Header } from "../header/header";
+import { Elevador } from '../../types/Elevador';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @Component({
   selector: 'app-componente-list',
-  imports: [CommonModule, FormsModule, RouterLink, Footer, Header],
+  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule],
   templateUrl: './componente-list.html',
   styleUrl: './componente-list.css'
 })
@@ -20,6 +21,8 @@ export class ComponenteList implements OnInit{
   elevadorId: string | null = null;
   componentes: Componente[] = [];
   idComponenteSelecionado = "";
+  isModalOpen = false;
+  componente: Componente = {id: "", nome: "", hePadrao: false, situacao: true, imagemBase64: undefined, observacao: ""}
   componenteRequest: ComponenteRequest = {nome: "", hePadrao: false, imagem: undefined, observacao: "", situacao: true};
 
   constructor(
@@ -96,16 +99,35 @@ export class ComponenteList implements OnInit{
         URL.revokeObjectURL(fileUrl);
       },
       error: (err) => {
-        console.log(err);
+        console.log(err.error);
       },
     })
   }
-  
+  fecharModal(): void {
+    this.isModalOpen = false;
+    this.componenteRequest = { nome: '', hePadrao: false, imagem: undefined, observacao: "" };
+  }
+  editarComponente(componente: ComponenteRequest | Componente){
+
+  }
   voltarElevador(){
+    let elevador:Elevador = {id: '', modelo: '',predioId: '', componentes: []} 
     if(this.elevadorId){
-      this.router.navigate(['/elevadores/', this.elevadorId])
-      .catch(err =>{
-        this.router.navigate(["/login"]);
+      console.log("Estou na função, "+ this.elevadorId)
+      this.elevadorService.buscarId(this.elevadorId)
+      .subscribe({
+        next: (elevador) =>{
+          console.log(elevador.modelo);
+          console.log(elevador.predioId);
+
+          this.router.navigate(['/elevadores/', elevador.predioId])
+          .catch( () =>{
+            this.router.navigate(["/login"]);
+          });
+        },
+        error: (err) =>{
+          window.alert(err.err);
+        }
       })
     }else{
       window.alert("Erro inesperado");

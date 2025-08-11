@@ -1,5 +1,7 @@
 package br.com.abeel.abeel.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +20,7 @@ import java.util.UUID;
 public class Componente {
 
     @Id
-    @Column(name = "componente_id")
+    @Column(name = "componente_id", columnDefinition = "BINARY(16)")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 

@@ -26,8 +26,8 @@ export class LoginPage {
         this.route.navigate(['/predios'])
       },
       error: (err) =>{
-        if(typeof err.error.error === 'string'){
-          window.alert(err.error.error);
+        if(typeof err.error === 'string'){
+          window.alert(err.error);
         }else{
           window.alert("Ocorreu um erro inesperado ");
         } 

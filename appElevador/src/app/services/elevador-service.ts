@@ -27,6 +27,10 @@ export class ElevadorService {
     return this.httpClient.get<Elevador[]>(this.url+"/elevador/"+idPredio+"/"+modelo);
   }
 
+  buscarId(idElevador: string): Observable<Elevador>{
+    return this.httpClient.get<Elevador>(this.url+"/elevador/"+idElevador+"/buscar");
+  }
+
   removerElevadorDoPredio(idPredio: string, idElevador: string): Observable<any>{
     return this.httpClient.delete(this.url+"/elevador/"+idPredio+"/"+idElevador, { responseType: 'text'});
   }
