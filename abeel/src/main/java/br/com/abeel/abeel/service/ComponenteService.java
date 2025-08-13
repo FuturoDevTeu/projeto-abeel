@@ -1,6 +1,5 @@
 package br.com.abeel.abeel.service;
 
-import br.com.abeel.abeel.controller.dto.ComponenteEntradaDto;
 import br.com.abeel.abeel.controller.dto.ComponenteSaidaDto;
 import br.com.abeel.abeel.entity.Componente;
 import br.com.abeel.abeel.entity.Elevador;
@@ -18,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ComponenteService {
@@ -28,29 +29,17 @@ public class ComponenteService {
     @Autowired
     private ElevadorRepository er;
 
-    private ResponseEntity<?> validarCampos(UUID idComponente, ComponenteEntradaDto dto, String acao){
-        if(dto.nome() == null || dto.nome().trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome está em branco"));
+
+    private ResponseEntity<?> validarElevador(UUID idElevador){
+        Optional<Elevador> elevadorOptional = er.findById(idElevador);
+
+        if(elevadorOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
         }
 
-        if(!dto.nome().matches("^[\\p{L} ]{3,}$")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome inválido (mínimo 3 caracteres alfabéticos)"));
-        }
-
-        if(acao.equals("cadastrar")){
-            if(cr.findByNome(dto.nome()).isPresent()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Esse componente já existe"));
-            }
-        } else if(acao.equals("editar")){
-            if (cr.findByNomeAndIdNot(dto.nome(), idComponente).isPresent()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Já existe outro componente com esse nome"));
-            }
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(elevadorOptional.get());
     }
-
-    private ResponseEntity<?> validarCamposParaCadastro(String nome, @Nullable MultipartFile imagem, @Nullable String observacao){
+    private ResponseEntity<?> validarCamposCadastro(String nome, @Nullable MultipartFile imagem, @Nullable String observacao){
         if (nome == null || nome.trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome está em branco"));
         }
@@ -58,7 +47,7 @@ public class ComponenteService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome inválido (mínimo 3 caracteres alfabéticos)"));
         }
 
-        if (cr.findByNome(nome).isPresent()) {
+        if (!cr.findByNome(nome).isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Esse componente já existe"));
         }
 
@@ -70,15 +59,25 @@ public class ComponenteService {
 
         return ResponseEntity.ok().build();
     }
-
-    private ResponseEntity<?> validarElevador(UUID idElevador){
-        Optional<Elevador> elevadorOptional = er.findById(idElevador);
-
-        if(elevadorOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
+    private ResponseEntity<?> validarCamposEditar(String nome, @Nullable MultipartFile imagem, @Nullable String observacao, UUID idComponente){
+        if (nome == null || nome.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome está em branco"));
+        }
+        if (!nome.matches("^[\\p{L} ]{3,}$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome inválido (mínimo 3 caracteres alfabéticos)"));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(elevadorOptional.get());
+        if (!cr.findByNomeAndIdNot(nome, idComponente).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Esse componente já existe"));
+        }
+
+        if(imagem != null && !imagem.isEmpty()){
+            if(!imagem.getContentType().matches("^image/.*$")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Formato de imagem inválido. Apenas imagens são permitidas."));
+            }
+        }
+
+        return ResponseEntity.ok().build();
     }
 
     private ResponseEntity<?> validarComponenteElevador(UUID idComponente, UUID idElevador){
@@ -98,6 +97,28 @@ public class ComponenteService {
         return ResponseEntity.status(HttpStatus.OK).body(componenteOptional.get());
     }
 
+    private void replicarParaElevadores(Componente componentePadrao) {
+        List<Elevador> elevadores = StreamSupport.stream(er.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+
+        for (Elevador elevador : elevadores) {
+            boolean jaExiste = elevador.getComponentes().stream()
+                    .anyMatch(c -> c.getNome().equalsIgnoreCase(componentePadrao.getNome()));
+
+            if (!jaExiste) {
+                Componente novoComponente = new Componente(
+                        componentePadrao.getNome(),
+                        true,
+                        null,
+                        "",
+                        false, // replicado não é padrão
+                        elevador
+                );
+                cr.save(novoComponente);
+            }
+        }
+    }
+
     public ResponseEntity<?> cadastrar(
             UUID idElevador,
             String nome,
@@ -112,7 +133,7 @@ public class ComponenteService {
         }
         Elevador elevador = (Elevador) respostaElevador.getBody();
 
-        ResponseEntity<?> respostaCampos = validarCamposParaCadastro(nome, imagem, observacao);
+        ResponseEntity<?> respostaCampos = validarCamposCadastro(nome, imagem, observacao);
         if(respostaCampos.getStatusCode() != HttpStatus.OK) {
             return respostaCampos;
         }
@@ -135,6 +156,11 @@ public class ComponenteService {
                 elevador
         );
         cr.save(componente);
+
+        if (hePadrao) {
+            replicarParaElevadores(componente);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body("Componente criado com sucesso");
     }
 
@@ -192,9 +218,18 @@ public class ComponenteService {
         return ResponseEntity.status(HttpStatus.OK).body("Componente deletado com sucesso");
     }
 
-    public ResponseEntity<?> editar(UUID idElevador, UUID idComponente, ComponenteEntradaDto dto){
+    public ResponseEntity<?> editar(
+            UUID idElevador,
+            UUID idComponente,
+            String nome,
+            boolean situacao,
+            @Nullable MultipartFile imagem,
+            String observacao,
+            boolean hePadrao
+    ){
         ResponseEntity<?> respostaComponente = validarComponenteElevador(idComponente, idElevador);
-        ResponseEntity<?> respostaCampos = validarCampos(idComponente, dto, "editar");
+        ResponseEntity<?> respostaCampos = validarCamposEditar(nome, imagem, observacao, idComponente);
+
 
         if(respostaComponente.getStatusCode() != HttpStatus.OK) {
             return respostaComponente;
@@ -202,16 +237,29 @@ public class ComponenteService {
         if(respostaCampos.getStatusCode() != HttpStatus.OK) {
             return respostaCampos;
         }
+        byte[] imagemBytes = null;
+        if (imagem != null && !imagem.isEmpty()) {
+            try {
+                imagemBytes = imagem.getBytes();
+            } catch (IOException ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error","Erro ao processar a imagem: " + ex.getMessage()));
+            }
+        }
 
         Componente componente = (Componente) respostaComponente.getBody();
 
-        componente.setNome(dto.nome());
-        componente.setSituacao(dto.situacao());
-        componente.setImagem(dto.imagem());
-        componente.setObservacao(dto.observacao());
-        componente.setHePadrao(dto.hePadrao());
+        componente.setNome(nome);
+        componente.setSituacao(situacao);
+        componente.setImagem(imagemBytes);
+        componente.setObservacao(observacao);
+        componente.setHePadrao(hePadrao);
 
         cr.save(componente);
+
+        if (hePadrao) {
+            replicarParaElevadores(componente);
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body("Componente editado com sucesso");
     }
 }
