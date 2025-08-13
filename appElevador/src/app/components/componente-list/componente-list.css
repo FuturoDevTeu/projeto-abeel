@@ -466,7 +466,7 @@ body, html {
 
 .modal-current-image {
   max-width: 90px;
-  max-height: 90px;
+  max-height: 50px;
   object-fit: contain;
   margin-top: 0.8rem;
   border: 1px solid #eee;

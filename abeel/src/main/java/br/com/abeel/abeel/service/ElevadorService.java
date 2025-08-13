@@ -73,7 +73,6 @@ public class ElevadorService {
 
     // MÉTODO buscarId - AGORA USANDO O NOVO AUXILIAR E CONVERTENDO PARA DTO PARA RETORNAR AO CONTROLLER
     public ResponseEntity<?> buscarId(UUID idElevador){
-        System.out.println("O id do elevador na função do back: "+ idElevador);
 
         // Usando o novo método auxiliar para buscar a ENTIDADE
         Optional<Elevador> elevadorOptional = findElevadorEntityById(idElevador);
@@ -102,21 +101,6 @@ public class ElevadorService {
                 new ArrayList<>()
         );
 
-        List<Componente> listaComponentes = cr.findAllByHePadraoTrue();
-        List<Componente> listaComponentesNovoElevador = new ArrayList<>();
-
-        for(Componente componentePadrao : listaComponentes){
-            Componente componente = new Componente(
-                    componentePadrao.getNome(),
-                    componentePadrao.isSituacao(),
-                    componentePadrao.getImagem(),
-                    componentePadrao.getObservacao(),
-                    false,
-                    elevador
-            );
-            listaComponentesNovoElevador.add(componente);
-        }
-        elevador.setComponentes(listaComponentesNovoElevador);
         er.save(elevador);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Elevador cadastrado com sucesso");

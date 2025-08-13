@@ -52,7 +52,16 @@ public class ComponenteController {
     }
 
     @PutMapping("/{idElevador}/{idComponente}")
-    public ResponseEntity<?> editar(@PathVariable("idElevador") UUID idElevador, @PathVariable("idComponente") UUID idComponente, @RequestBody ComponenteEntradaDto dto){
-        return cs.editar(idElevador, idComponente, dto);
+    public ResponseEntity<?> editar(
+            @PathVariable("idElevador") UUID idElevador,
+            @PathVariable("idComponente") UUID idComponente,
+            @RequestParam("nome") String nome,
+            @RequestParam("situacao") boolean situacao,
+            @RequestParam(value = "imagem", required = false) @Nullable MultipartFile imagem,
+            @RequestParam("observacao") String observacao,
+            @RequestParam("hePadrao") boolean hePadrao
+
+    ){
+        return cs.editar(idElevador, idComponente, nome, situacao, imagem, observacao, hePadrao);
     }
 }
