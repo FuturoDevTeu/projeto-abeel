@@ -27,9 +27,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional; // Importe Optional
 import java.util.UUID;
-
-
 
 @Service
 public class ElevadorService {
@@ -44,25 +43,19 @@ public class ElevadorService {
     private ComponenteRepository cr;
 
     private ResponseEntity<?> validarCampos(ElevadorEntradaDto dto){
-
         if(dto.modelo() == null || dto.modelo().trim().isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Modelo está em branco"));
-
         if(!dto.modelo().matches("^[\\p{L}\\p{N} ]{3,}$")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Modelo inválido"));
-
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     private ResponseEntity<?> validarPredio(UUID idPredio){
         var predioOptional = pr.findById(idPredio);
-
         if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Prédio não encontrado"));
-
         return ResponseEntity.status(HttpStatus.OK).body(predioOptional.get());
     }
 
     private ResponseEntity<?> validarElevadorPredio(UUID idPredio, UUID idElevaodr){
         var predioOptional = pr.findById(idPredio);
-
         if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Prédio não encontrado"));
 
         var elevadorOptional = er.findByIdAndPredio(idElevaodr, predioOptional.get());
@@ -70,27 +63,36 @@ public class ElevadorService {
 
         return ResponseEntity.status(HttpStatus.OK).body(elevadorOptional.get());
     }
-    public ResponseEntity<?> validarElevador(UUID idElevador){
+
+    // NOVO MÉTODO AUXILIAR PARA RETORNAR A ENTIDADE Elevador
+    // Este método é privado porque é um auxiliar interno do serviço.
+    private Optional<Elevador> findElevadorEntityById(UUID idElevador){
         byte[] idBytes = UUIDConverter.toBytes(idElevador);
-        var elevadorOptional = er.findByIdBinary(idBytes);
+        return er.findByIdBinary(idBytes);
+    }
+
+    // MÉTODO buscarId - AGORA USANDO O NOVO AUXILIAR E CONVERTENDO PARA DTO PARA RETORNAR AO CONTROLLER
+    public ResponseEntity<?> buscarId(UUID idElevador){
         System.out.println("O id do elevador na função do back: "+ idElevador);
 
-        if(elevadorOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
+        // Usando o novo método auxiliar para buscar a ENTIDADE
+        Optional<Elevador> elevadorOptional = findElevadorEntityById(idElevador);
+
+        if(elevadorOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
+        }
 
         Elevador elevador = elevadorOptional.get();
-
-        ElevadorSaidaDto dto = new ElevadorSaidaDto(elevador);
-
+        ElevadorSaidaDto dto = new ElevadorSaidaDto(elevador); // Convertendo a entidade para DTO de saída
         return ResponseEntity.ok().body(dto);
     }
+
     public ResponseEntity<?> cadastrar(UUID idPredio, ElevadorEntradaDto dto){
         ResponseEntity<?> respostaPredio = validarPredio(idPredio);
         ResponseEntity<?> respostaCampos = validarCampos(dto);
 
-
         if(respostaPredio.getStatusCode() != HttpStatus.OK) return respostaPredio;
         if (respostaCampos.getStatusCode() != HttpStatus.OK) return respostaCampos;
-
 
         var predio = (Predio) respostaPredio.getBody();
 
@@ -171,14 +173,6 @@ public class ElevadorService {
         return ResponseEntity.status(HttpStatus.OK).body(dtoList);
     }
 
-    public ResponseEntity<?> buscarId(UUID idElevador){
-        ResponseEntity<?>  resposta = validarElevador(idElevador);
-
-        if(resposta.getStatusCode() != HttpStatus.OK) return resposta;
-        var elevador = (ElevadorSaidaDto) resposta.getBody();
-        return ResponseEntity.ok().body(elevador);
-    }
-
     public ResponseEntity<?> remover(UUID idPredio, UUID idElevador){
         ResponseEntity<?> respostaElevador = validarElevadorPredio(idPredio, idElevador);
 
@@ -205,12 +199,17 @@ public class ElevadorService {
         return ResponseEntity.status(HttpStatus.OK).body("Elevador editado com sucesso");
     }
 
+    // MÉTODO gerarRelatorio - AGORA USANDO O NOVO AUXILIAR findElevadorEntityById
     public ResponseEntity<?> gerarRelatorio(UUID idElevador){
-        var resposta = validarElevador(idElevador);
+        // Busca a ENTIDADE Elevador diretamente
+        Optional<Elevador> elevadorOptional = findElevadorEntityById(idElevador);
 
-        if(resposta.getStatusCode() != HttpStatus.OK) return resposta;
+        if(elevadorOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado para o relatório"));
+        }
 
-        var elevador = (Elevador) resposta.getBody();
+        // Obtém a ENTIDADE Elevador
+        Elevador elevador = elevadorOptional.get(); // <--- AGORA AQUI É REALMENTE UM Elevador!
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -238,6 +237,7 @@ public class ElevadorService {
         tabelaCabecalho.setSpacingBefore(10f);
         tabelaCabecalho.setSpacingAfter(10f);
 
+        // Estes acessos agora funcionarão corretamente, pois 'elevador' é a entidade completa
         PdfPCell celulaPredio = new PdfPCell(new Phrase("Predio: "+ elevador.getPredio().getNome()));
         celulaPredio.setBorder(Rectangle.NO_BORDER);
 
@@ -270,6 +270,7 @@ public class ElevadorService {
         tabelaConteudo.addCell(celulaSituacao);
         tabelaConteudo.addCell(celulaObservacao);
 
+        // Este loop também funcionará, pois 'elevador' tem os Componentes associados
         for (Componente componente : elevador.getComponentes()){
             PdfPCell celulaNoneC = new PdfPCell(new Phrase(componente.getNome()));
             PdfPCell celulaSituacaoC = new PdfPCell(new Phrase(componente.isSituacao() ? "Bom" : "Ruim"));
@@ -283,5 +284,4 @@ public class ElevadorService {
         document.close();
         return ResponseEntity.status(HttpStatus.OK).body(baos.toByteArray());
     }
-
 }

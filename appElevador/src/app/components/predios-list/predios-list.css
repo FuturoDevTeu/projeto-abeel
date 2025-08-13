@@ -1,263 +1,300 @@
-.predios-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px; /* Reduzido para um layout ainda mais compacto */
-    padding: 16px;
-    margin-top: 30px;
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #f0f2f5;
+  line-height: 1.6;
+  color: #333;
 }
-.header{
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    padding: 16px;
-    right: 0;
+
+.predios-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  margin-top: 30px;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  flex-direction: row; /* Altera para linha */
+  justify-content: center; /* Centraliza os itens horizontalmente */
+  align-items: center; /* Centraliza os itens verticalmente */
+  gap: 15px; /* Aumenta a distância entre o input e o ícone para um melhor espaçamento */
+  padding: 16px;
+  box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+}
+
+.header input {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  font-size: 1em;
+  width: 100%;
+  max-width: 350px; /* Reduz um pouco o max-width para melhor encaixe ao lado do botão */
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+}
+
+.header input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.header .icon-add {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: 0.8s;
+  flex-shrink: 0; /* Impede que o ícone diminua em telas menores */
 }
 .header .icon-add:hover{
-    transition: 0.8s;
-    transform: scale(1.2);
+  transform: scale(1.2);
 }
+
 .predio-card {
-    width: 260px; /* Reduzido de 300px */
-    height: auto;
-    min-height: 110px; /* Altura mínima ajustada */
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.25);
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 12px; /* Reduzido de 15px */
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    text-align: center;
+  width: 260px;
+  height: auto;
+  min-height: 110px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.25);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  text-align: center;
 }
 
 .predio-card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    border-color: #007bff;
-    z-index: 10;
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  border-color: #007bff;
+  z-index: 10;
 }
 
 .predio-card.selected {
-    border-color: #3f51b5;
-    box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
-    transform: translateY(-2px) scale(1.01);
+  border-color: #3f51b5;
+  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
+  transform: translateY(-2px) scale(1.01);
 }
 
 .predio-card mat-card-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
 }
 
 .predio-card h3 {
-    font-size: 1.2em; /* Reduzido de 1.3em */
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 10px; /* Espaçamento ajustado */
-    font-weight: 600;
-    text-align: center;
-    padding-bottom: 6px; /* Espaçamento ajustado */
-    border-bottom: 1px solid #ddd;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    word-wrap: normal;
-    overflow-wrap: normal;
-    hyphens: none;
+  font-size: 1.2em;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #ddd;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-wrap: normal;
+  overflow-wrap: normal;
+  hyphens: none;
 }
 
 .predio-card p {
-    font-size: 0.8em; /* Reduzido de 0.9em */
-    color: #666;
-    margin-bottom: 2px; /* Espaçamento ajustado */
-    text-align: center;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
+  font-size: 0.8em;
+  color: #666;
+  margin-bottom: 2px;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .predio-card p strong {
-    color: #444;
+  color: #444;
 }
 
 .card-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px; /* Espaço ajustado */
-    padding: 0 12px; /* Espaço ajustado */
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  padding: 0 12px;
 }
 
 .icon-button {
-    cursor: pointer;
-    font-size: 20px; /* Reduzido de 22px */
-    transition: color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+  font-size: 20px;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .edit-icon {
-    color: #28a745;
+  color: #28a745;
 }
 
 .edit-icon:hover {
-    color: #218838;
-    transform: scale(1.1);
+  color: #218838;
+  transform: scale(1.1);
 }
 
 .delete-icon {
-    color: #dc3545;
+  color: #dc3545;
 }
 
 .delete-icon:hover {
-    color: #c82333;
-    transform: scale(1.1);
+  color: #c82333;
+  transform: scale(1.1);
 }
 
-/* O resto dos estilos foram mantidos, apenas os valores do card foram alterados */
-
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.3s ease-out;
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .modal.open {
-    display: flex;
+  display: flex;
 }
 
 .modal-content {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    position: relative;
-    animation: slideIn 0.4s ease-out;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: slideIn 0.4s ease-out;
 }
 
 .modal-content h2 {
-    font-size: 2em;
-    color: #333;
-    margin-bottom: 25px;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 25px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
 }
 
 .close {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    cursor: pointer;
-    font-size: 32px;
-    color: #888;
-    transition: color 0.2s ease;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 32px;
+  color: #888;
+  transition: color 0.2s ease;
 }
 
 .close:hover {
-    color: #555;
+  color: #555;
 }
 
 .form-group {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #555;
-    font-size: 1.1em;
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+  font-size: 1.1em;
 }
 
 .form-group input[type="text"] {
-    width: calc(100% - 20px);
-    padding: 12px 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-sizing: border-box;
+  width: calc(100% - 20px);
+  padding: 12px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
 }
 
 .form-group input[type="text"]:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-    outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  outline: none;
 }
 
 .form-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 30px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
 }
 
 .form-actions .close-button {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .form-actions .close-button:hover {
-    background-color: #e0e0e0;
-    border-color: #bbb;
+  background-color: #e0e0e0;
+  border-color: #bbb;
 }
 
 button[mat-raised-button][color="primary"] {
-    background-color: #28a745 !important;
-    color: #fff !important;
-    border: none !important;
-    padding: 10px 20px;
-    font-size: 1em;
+  background-color: #28a745 !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 10px 20px;
+  font-size: 1em;
 }
 
 button[mat-raised-button][color="primary"]:hover {
-    background-color: #218838 !important;
+  background-color: #218838 !important;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideIn {
-    from { transform: translateY(-30px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .no-predios-message {
-    text-align: center;
-    margin-top: 50px;
-    color: #777;
-    font-size: 1.2em;
+  text-align: center;
+  margin-top: 50px;
+  color: #777;
+  font-size: 1.2em;
 }
 
 .no-predios-message p {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .spinner {
-  border: 4px solid #f3f3f3; 
-  border-top: 4px solid #3498db; 
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -271,106 +308,106 @@ button[mat-raised-button][color="primary"]:hover {
 }
 
 @media (max-width: 600px) {
-    .predios-container {
-        gap: 12px; /* Ajustado para telas pequenas */
-        padding: 10px;
-    }
+  .predios-container {
+    gap: 12px;
+    padding: 10px;
+  }
 
-    .predio-card {
-        width: 100%;
-        max-width: 260px; /* Reduzido de 280px */
-        min-height: 100px; /* Reduzido de 120px */
-        padding: 8px; /* Reduzido de 10px */
-    }
+  .predio-card {
+    width: 100%;
+    max-width: 260px;
+    min-height: 100px;
+    padding: 8px;
+  }
 
-    .predio-card h3 {
-        font-size: 1em; /* Reduzido de 1.1em */
-    }
+  .predio-card h3 {
+    font-size: 1em;
+  }
 
-    .predio-card p {
-        font-size: 0.8em; /* Reduzido de 0.85em */
-    }
+  .predio-card p {
+    font-size: 0.8em;
+  }
 
-    .modal-content {
-        padding: 20px;
-        max-width: 95%;
-    }
+  .modal-content {
+    padding: 20px;
+    max-width: 95%;
+  }
 
-    .modal-content h2 {
-        font-size: 1.5em;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-    }
+  .modal-content h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+  }
 
-    .close {
-        font-size: 28px;
-        top: 10px;
-        right: 15px;
-    }
+  .close {
+    font-size: 28px;
+    top: 10px;
+    right: 15px;
+  }
 
-    .form-group label {
-        font-size: 1em;
-    }
+  .form-group label {
+    font-size: 1em;
+  }
 
-    .form-group input[type="text"] {
-        padding: 10px 8px;
-        font-size: 0.9em;
-    }
+  .form-group input[type="text"] {
+    padding: 10px 8px;
+    font-size: 0.9em;
+  }
 
-    .form-actions {
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
-    }
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
 
-    .form-actions button,
-    .form-actions .close-button {
-        width: 100%;
-        font-size: 1em;
-        padding: 12px 15px;
-    }
+  .form-actions button,
+  .form-actions .close-button {
+    width: 100%;
+    font-size: 1em;
+    padding: 12px 15px;
+  }
 }
 
 @media (min-width: 601px) and (max-width: 992px) {
-    .predios-container {
-        gap: 16px; /* Reduzido de 20px */
-        padding: 20px;
-    }
+  .predios-container {
+    gap: 16px;
+    padding: 20px;
+  }
 
-    .predio-card {
-        width: calc(50% - 24px); /* Ajustado para o novo gap de 16px */
-        max-width: 300px; /* Reduzido de 350px */
-        min-height: 120px; /* Reduzido de 140px */
-    }
+  .predio-card {
+    width: calc(50% - 24px);
+    max-width: 300px;
+    min-height: 120px;
+  }
 
-    .modal-content {
-        padding: 25px;
-        max-width: 450px;
-    }
+  .modal-content {
+    padding: 25px;
+    max-width: 450px;
+  }
 
-    .modal-content h2 {
-        font-size: 1.8em;
-    }
+  .modal-content h2 {
+    font-size: 1.8em;
+  }
 
-    .form-group input[type="text"] {
-        padding: 11px 9px;
-    }
+  .form-group input[type="text"] {
+    padding: 11px 9px;
+  }
 
-    .form-actions {
-        gap: 15px;
-    }
+  .form-actions {
+    gap: 15px;
+  }
 }
 
 @media (min-width: 993px) {
-    .predios-container {
-        gap: 16px;
-    }
+  .predios-container {
+    gap: 16px;
+  }
 
-    .predio-card {
-        width: 260px; 
-    }
+  .predio-card {
+    width: 260px;
+  }
 
-    .modal-content {
-        max-width: 500px;
-    }
+  .modal-content {
+    max-width: 500px;
+  }
 }
