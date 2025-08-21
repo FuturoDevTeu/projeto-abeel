@@ -33,7 +33,6 @@ public class ElevadorController {
     }
     @GetMapping("/{idElevador}/buscar")
     private ResponseEntity<?> buscarId(@PathVariable("idElevador") UUID idElevador){
-        System.out.println("O id do front chegou: "+ idElevador);
         return es.buscarId(idElevador);
     }
 

@@ -64,17 +64,14 @@ public class ElevadorService {
         return ResponseEntity.status(HttpStatus.OK).body(elevadorOptional.get());
     }
 
-    // NOVO MÉTODO AUXILIAR PARA RETORNAR A ENTIDADE Elevador
-    // Este método é privado porque é um auxiliar interno do serviço.
+
     private Optional<Elevador> findElevadorEntityById(UUID idElevador){
         byte[] idBytes = UUIDConverter.toBytes(idElevador);
         return er.findByIdBinary(idBytes);
     }
 
-    // MÉTODO buscarId - AGORA USANDO O NOVO AUXILIAR E CONVERTENDO PARA DTO PARA RETORNAR AO CONTROLLER
     public ResponseEntity<?> buscarId(UUID idElevador){
 
-        // Usando o novo método auxiliar para buscar a ENTIDADE
         Optional<Elevador> elevadorOptional = findElevadorEntityById(idElevador);
 
         if(elevadorOptional.isEmpty()) {
@@ -95,6 +92,7 @@ public class ElevadorService {
 
         var predio = (Predio) respostaPredio.getBody();
 
+
         var elevador = new Elevador(
                 dto.modelo(),
                 predio,
@@ -102,6 +100,20 @@ public class ElevadorService {
         );
 
         er.save(elevador);
+
+        List<Componente> listaComponentes = cr.findAllByHePadraoTrue();
+        for(Componente componente : listaComponentes){
+            Componente novoComponente = new Componente(
+                    componente.getNome(),
+                    componente.isSituacao(),
+                    componente.getImagem(),
+                    componente.getObservacao(),
+                    false,
+                    elevador
+            );
+            cr.save(novoComponente);
+        }
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Elevador cadastrado com sucesso");
     }
@@ -182,8 +194,6 @@ public class ElevadorService {
         er.save(elevador);
         return ResponseEntity.status(HttpStatus.OK).body("Elevador editado com sucesso");
     }
-
-    // MÉTODO gerarRelatorio - AGORA USANDO O NOVO AUXILIAR findElevadorEntityById
     public ResponseEntity<?> gerarRelatorio(UUID idElevador){
         // Busca a ENTIDADE Elevador diretamente
         Optional<Elevador> elevadorOptional = findElevadorEntityById(idElevador);
@@ -192,7 +202,6 @@ public class ElevadorService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado para o relatório"));
         }
 
-        // Obtém a ENTIDADE Elevador
         Elevador elevador = elevadorOptional.get(); // <--- AGORA AQUI É REALMENTE UM Elevador!
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -221,7 +230,7 @@ public class ElevadorService {
         tabelaCabecalho.setSpacingBefore(10f);
         tabelaCabecalho.setSpacingAfter(10f);
 
-        // Estes acessos agora funcionarão corretamente, pois 'elevador' é a entidade completa
+
         PdfPCell celulaPredio = new PdfPCell(new Phrase("Predio: "+ elevador.getPredio().getNome()));
         celulaPredio.setBorder(Rectangle.NO_BORDER);
 
@@ -254,7 +263,6 @@ public class ElevadorService {
         tabelaConteudo.addCell(celulaSituacao);
         tabelaConteudo.addCell(celulaObservacao);
 
-        // Este loop também funcionará, pois 'elevador' tem os Componentes associados
         for (Componente componente : elevador.getComponentes()){
             PdfPCell celulaNoneC = new PdfPCell(new Phrase(componente.getNome()));
             PdfPCell celulaSituacaoC = new PdfPCell(new Phrase(componente.isSituacao() ? "Bom" : "Ruim"));
