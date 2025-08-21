@@ -106,7 +106,7 @@ export class ElevadoresComponent implements OnInit {
           this.messagem = "";
           this.estaCarregando = false;
         }
-        this.elevadoresDoPredio = elevadores;
+        this.elevadoresDoPredio = Array.from(elevadores);
         this.cdr.detectChanges();
       },
       error: (error) => {
