@@ -111,14 +111,13 @@ public class ComponenteService {
                         true,
                         null,
                         "",
-                        false, // replicado não é padrão
+                        false,
                         elevador
                 );
                 cr.save(novoComponente);
             }
         }
     }
-
     public ResponseEntity<?> cadastrar(
             UUID idElevador,
             String nome,
