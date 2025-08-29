@@ -195,7 +195,7 @@ body, html {
 }
 
 .form-title {
-  background-color: #1a237e; /* Cor azul do checklist header */
+  background-color: #1a237e;
   padding: 1.2rem 1.5rem;
   margin-bottom: 0;
   border-radius: 10px 10px 0 0;
@@ -395,7 +395,7 @@ body, html {
 
 .form-card > .btn-accent {
   margin-top: 1.5rem;
-  margin-bottom: 1.5rem; /* Espaçamento para o final do modal */
+  margin-bottom: 1.5rem;
   align-self: center;
 }
 
@@ -466,7 +466,7 @@ body, html {
 
 .modal-current-image {
   max-width: 90px;
-  max-height: 50px;
+  max-height: 90px;
   object-fit: contain;
   margin-top: 0.8rem;
   border: 1px solid #eee;
@@ -501,7 +501,7 @@ body, html {
   }
 
   .componente-table {
-    min-width: 500px;
+    min-width: 600px;
   }
 
   .componente-table th,
@@ -631,19 +631,21 @@ body, html {
     width: 100%;
     justify-content: center;
     gap: 0.6rem;
+    flex-direction: column;
+    align-items: center;
   }
 
   .btn {
     padding: 0.4rem 1rem;
     font-size: 0.75rem;
     border-radius: 16px;
-    flex-grow: 1;
-    min-width: unset;
-    max-width: 150px;
+    width: 200px;
+    max-width: 90%;
   }
 
   .componente-table {
-    min-width: 320px;
+    width: 100%;
+    min-width: 500px;
   }
 
   .componente-table th,
@@ -652,13 +654,6 @@ body, html {
     font-size: 0.7rem;
   }
   
-  .componente-table th:nth-child(4),
-  .componente-table td:nth-child(4),
-  .componente-table th:nth-child(5),
-  .componente-table td:nth-child(5) {
-    display: none;
-  }
-
   .component-image {
     max-width: 40px;
     max-height: 40px;
