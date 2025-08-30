@@ -66,6 +66,7 @@
             return new BCryptPasswordEncoder();
         }
 
+
         @Bean
         public CorsConfigurationSource corsConfigurationSource(){
             CorsConfiguration config = new CorsConfiguration();

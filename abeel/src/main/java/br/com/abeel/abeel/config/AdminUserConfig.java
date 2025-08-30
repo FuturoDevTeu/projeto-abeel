@@ -7,6 +7,7 @@ import br.com.abeel.abeel.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -35,7 +36,7 @@ public class AdminUserConfig implements CommandLineRunner {
         var userAdmin = ur.findByUsername(adminUsername);
         var roleAdmin = rr.findByNome(Role.Values.ADMIN.name());
 
-        if(roleAdmin == null){
+        if (roleAdmin == null) {
             roleAdmin = new Role();
             roleAdmin.setNome(Role.Values.ADMIN.name());
             rr.save(roleAdmin);
@@ -55,6 +56,5 @@ public class AdminUserConfig implements CommandLineRunner {
                     ur.save(user);
                 }
         );
-
     }
 }
