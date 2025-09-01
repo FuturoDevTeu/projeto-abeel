@@ -2,17 +2,36 @@
   <div class="login-box">
     <div class="logo">
       <img src="abeel.png" alt="ABEEL">
-      </div>
+    </div>
 
     <form class="login-form" (ngSubmit)="fazerLogin()">
       <div class="form-group">
         <label for="username">Usuário</label>
-        <input type="text" id="username" [(ngModel)]="login.username" name="username" placeholder="Nome de usuário">
+        <input 
+          type="text" 
+          id="username" 
+          [(ngModel)]="login.username" 
+          name="username" 
+          placeholder="Nome de usuário"
+          [class.input-error]="errorMessage"
+        >
       </div>
 
       <div class="form-group">
         <label for="password">Senha</label>
-        <input type="password" id="password" [(ngModel)]="login.password" name="password" placeholder="Senha">
+        <input 
+          type="password" 
+          id="password" 
+          [(ngModel)]="login.password" 
+          name="password" 
+          placeholder="Senha"
+          [class.input-error]="errorMessage"
+        >
+      </div>
+
+      <!-- Mensagem de erro -->
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
       </div>
 
       <button type="submit" class="btn-entrar">Entrar</button>

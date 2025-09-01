@@ -73,6 +73,20 @@
   background-color: #246a44;
 }
 
+/* ======== NOVO: Estilo para erro no input ======== */
+.input-error {
+  border: 2px solid #e74c3c !important;
+  background-color: #fdecea;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
 /* ==================================== */
 /* MEDIA QUERY PARA TABLETS (min-width: 768px) */
 /* ==================================== */

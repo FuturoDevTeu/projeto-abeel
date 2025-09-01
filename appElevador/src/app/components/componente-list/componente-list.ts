@@ -146,7 +146,7 @@ export class ComponenteList implements OnInit{
       },
       error: (err) => {
         console.error("Erro ao cadastrar componente:", err);
-        alert("Erro ao cadastrar componente. Verifique o console ou a conexão com a API.");
+        alert("Erro ao cadastrar componente.");
       },
     })
   }
@@ -169,7 +169,7 @@ export class ComponenteList implements OnInit{
         },
         error: (err) => {
           console.error("Erro ao editar componente:", err);
-          alert("Erro ao editar componente. Verifique o console ou a conexão com a API.");
+          alert("Erro ao editar componente.");
         },
       });
   }
@@ -187,11 +187,11 @@ export class ComponenteList implements OnInit{
           next: (res) => {
             console.log("Componente deletado com sucesso:", res);
             alert("Componente deletado com sucesso!");
-            this.carregarListaComponentes(this.elevadorId!); // Recarrega a lista
+            this.carregarListaComponentes(this.elevadorId!);
           },
           error: (err) => {
             console.error("Erro ao deletar componente:", err);
-            alert("Erro ao deletar componente. Verifique o console ou a conexão com a API.");
+            alert("Erro ao deletar componente.");
           },
         });
     }
@@ -239,7 +239,7 @@ export class ComponenteList implements OnInit{
       },
       error: (err) => {
         console.error("Erro ao gerar relatório:", err);
-        alert("Erro ao gerar relatório. Verifique o console.");
+        alert("Erro ao gerar relatório.");
       },
     })
   }
@@ -262,7 +262,7 @@ export class ComponenteList implements OnInit{
         },
         error: (err) =>{
           console.error("Erro ao buscar elevador para voltar:", err);
-          alert("Erro inesperado ao voltar. Verifique o console.");
+          alert("Erro inesperado ao voltar.");
         }
       })
     }else{
