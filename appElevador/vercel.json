@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "dist/appElevador/browser/**/*", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/dist/appElevador/browser/index.html" }
+  ]
+}
