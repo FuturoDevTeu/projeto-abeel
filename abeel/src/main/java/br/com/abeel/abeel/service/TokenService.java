@@ -85,7 +85,7 @@ public class TokenService {
         var user = (User) resposta.getBody();
 
         var criacao = Instant.now();
-        var expiracao = 500L;
+        var expiracao = 86400L;
 
         var scopes =user.getRole()
                 .stream()
