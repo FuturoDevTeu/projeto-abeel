@@ -5,6 +5,7 @@
   "projects": {
     "appElevador": {
       "projectType": "application",
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -12,7 +13,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -23,7 +24,12 @@
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
-            ]
+            ],
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -39,9 +45,7 @@
                   "maximumError": "15kB"
                 }
               ],
-              "outputHashing": "all",
-              "optimization": true,
-              "sourceMap": false
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
@@ -90,5 +94,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "756dfd23-2084-4c5b-8f95-79917ce04a24"
   }
 }
