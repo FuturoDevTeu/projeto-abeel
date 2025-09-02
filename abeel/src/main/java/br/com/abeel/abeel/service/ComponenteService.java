@@ -67,7 +67,7 @@ public class ComponenteService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome inválido (mínimo 3 caracteres alfabéticos)"));
         }
 
-        if (cr.existsByNomeAndIdNot(nome, idComponente)) {
+        if (!cr.existsByNomeAndIdNot(nome, idComponente)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Esse componente já existe"));
         }
 
