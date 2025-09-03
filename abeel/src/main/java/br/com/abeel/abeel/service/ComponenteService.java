@@ -67,10 +67,6 @@ public class ComponenteService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome inválido (mínimo 3 caracteres alfabéticos)"));
         }
 
-        if (cr.existsByNomeAndIdNot(nome, idComponente)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Esse componente já existe"));
-        }
-
         if(imagem != null && !imagem.isEmpty()){
             if(!imagem.getContentType().matches("^image/.*$")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Formato de imagem inválido. Apenas imagens são permitidas."));
