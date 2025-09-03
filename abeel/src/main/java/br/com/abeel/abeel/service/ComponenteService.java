@@ -60,9 +60,6 @@ public class ComponenteService {
         if (nome == null || nome.trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome está em branco"));
         }
-        if (!nome.matches("^[\\p{L}\\s\\-(),]{3,}$")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome inválido (mínimo 3 caracteres alfabéticos)"));
-        }
 
         if(imagem != null && !imagem.isEmpty()){
             if(!imagem.getContentType().matches("^image/.*$")) {
