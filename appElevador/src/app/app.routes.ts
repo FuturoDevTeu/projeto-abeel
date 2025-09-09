@@ -4,7 +4,7 @@ import { ElevadoresComponent } from './components/elevadores-list/elevadores-lis
 import { LoginPage } from './components/login-page/login-page';
 import { authGuard } from './auth-guard';
 import { ComponenteList } from './components/componente-list/componente-list';
-
+import { Empresa } from './components/empresa/empresa';
 // As funções de pré-renderização são definidas diretamente neste arquivo.
 
 /**
@@ -38,6 +38,12 @@ export const getComponentePrerenderParams = async () => {
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginPage },
+  {
+    path: 'empresa',
+    component: Empresa,
+    canActivate: [authGuard],
+    runGuardsAndResolvers: 'always'
+  },
   {
     path: 'predios',
     component: PrediosList,

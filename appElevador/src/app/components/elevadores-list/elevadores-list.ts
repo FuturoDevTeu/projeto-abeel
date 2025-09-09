@@ -1,13 +1,14 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
+import { CommonModule, NgIf } from '@angular/common';
 import { Elevador } from '../../types/Elevador';
 import { ElevadorService } from '../../services/elevador-service';
-import { FormsModule } from '@angular/forms';
 import { ElevadorRequest } from '../../types/ElevadorRequest';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { RouterLink, Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-elevadores',
@@ -19,6 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     FormsModule,
     MatIconModule,
+  
 ],
   templateUrl: './elevadores-list.html',
   styleUrl: './elevadores-list.css'
