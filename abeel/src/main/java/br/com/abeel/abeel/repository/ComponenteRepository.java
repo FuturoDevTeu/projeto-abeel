@@ -19,9 +19,9 @@ public interface ComponenteRepository extends CrudRepository<Componente, UUID> {
 
     List<Componente> findAllByNomeContainingAndElevador(String nome, Elevador elevador);
 
-    List<Componente> findByNome(String nome);
-
     boolean existsByNomeAndIdNot(String nome, UUID idComponente);
+
+    Componente findByNome(String nome);
 
     Optional<Componente> findByIdAndElevador(UUID id, Elevador elevador);
 

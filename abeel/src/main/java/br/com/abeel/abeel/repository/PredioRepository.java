@@ -16,6 +16,7 @@ public interface PredioRepository extends CrudRepository<Predio, UUID> {
     Optional<Predio> findByNomeAndBairro(String nome, String bairro);
 
     List<Predio> findByNomeContaining(String nome);
+    List<Predio> findAll();
 
     Optional<Predio> findByNomeAndBairroAndIdNot(String nome, String bairro, UUID idPredio);
 

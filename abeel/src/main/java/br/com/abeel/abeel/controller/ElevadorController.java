@@ -33,17 +33,17 @@ public class ElevadorController {
     }
     @GetMapping("/{idElevador}/buscar")
     private ResponseEntity<?> buscarId(@PathVariable("idElevador") UUID idElevador){
-        return es.buscarId(idElevador);
+        return es.buscarPeloId(idElevador);
     }
 
-    @DeleteMapping("/{idPredio}/{idElevador}")
-    private ResponseEntity<?> remover(@PathVariable("idPredio") UUID idPredio, @PathVariable("idElevador") UUID idElevador){
-        return es.remover(idPredio, idElevador);
+    @DeleteMapping("/{idElevador}")
+    private ResponseEntity<?> remover(@PathVariable("idElevador") UUID idElevador){
+        return es.remover(idElevador);
     }
 
-    @PutMapping("/{idPredio}/{idElevador}")
-    private ResponseEntity<?> editar(@PathVariable("idPredio") UUID idPredio, @PathVariable("idElevador") UUID idElevador, @RequestBody ElevadorEntradaDto dto){
-        return es.editar(idPredio, idElevador, dto);
+    @PutMapping("/{idElevador}")
+    private ResponseEntity<?> editar(@PathVariable("idElevador") UUID idElevador, @RequestBody ElevadorEntradaDto dto){
+        return es.editar(idElevador, dto);
     }
 
     @GetMapping("/{idElevador}/relatorio")

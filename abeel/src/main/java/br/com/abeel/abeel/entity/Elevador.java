@@ -33,17 +33,15 @@ public class Elevador {
     private Predio predio;
 
     @OneToMany(mappedBy = "elevador", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("componentes")
     private List<Componente> componentes;
 
+    public Elevador(String modelo, Predio predio) {
+        this.modelo = modelo;
+        this.predio = predio;
+    }
     public Elevador(String modelo, Predio predio, List<Componente> componentes) {
         this.modelo = modelo;
         this.predio = predio;
         this.componentes = componentes;
-    }
-
-    public Elevador(UUID id, String modelo) {
-        this.id = id;
-        this.modelo = modelo;
     }
 }

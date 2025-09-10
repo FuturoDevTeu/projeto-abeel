@@ -1,6 +1,8 @@
 package br.com.abeel.abeel.controller;
 
 import br.com.abeel.abeel.controller.dto.ComponenteEntradaDto;
+import br.com.abeel.abeel.controller.dto.SituacaoDto;
+import br.com.abeel.abeel.entity.Situacao;
 import br.com.abeel.abeel.service.ComponenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,9 @@ public class ComponenteController {
     public ResponseEntity<?> cadastrar(
             @PathVariable("idElevador") UUID idElevador,
             @RequestParam("nome") String nome,
-            @RequestParam("situacao") boolean situacao,
+            @RequestParam("situacao") SituacaoDto situacao,
             @RequestParam(value = "imagem", required = false) @Nullable MultipartFile imagem,
-            @RequestParam("observacao") String observacao,
+            @RequestParam(value = "observacao", required = false) String observacao,
             @RequestParam("hePadrao") boolean hePadrao
     ){
         
@@ -46,22 +48,21 @@ public class ComponenteController {
         return cs.buscar(idElevador, nome);
     }
 
-    @DeleteMapping("/{idElevador}/{idComponente}")
-    public ResponseEntity<?> deletar(@PathVariable("idElevador") UUID idElevador, @PathVariable("idComponente") UUID idComponente){
-        return cs.remover(idElevador, idComponente);
+    @DeleteMapping("/{idComponente}")
+    public ResponseEntity<?> deletar(@PathVariable("idComponente") UUID idComponente){
+        return cs.remover(idComponente);
     }
 
-    @PutMapping("/{idElevador}/{idComponente}")
+    @PutMapping("/{idComponente}")
     public ResponseEntity<?> editar(
-            @PathVariable("idElevador") UUID idElevador,
             @PathVariable("idComponente") UUID idComponente,
             @RequestParam("nome") String nome,
-            @RequestParam("situacao") boolean situacao,
+            @RequestParam("situacao") SituacaoDto situacao,
             @RequestParam(value = "imagem", required = false) @Nullable MultipartFile imagem,
             @RequestParam("observacao") String observacao,
             @RequestParam("hePadrao") boolean hePadrao
 
     ){
-        return cs.editar(idElevador, idComponente, nome, situacao, imagem, observacao, hePadrao);
+        return cs.editar(idComponente, nome, situacao, imagem, observacao, hePadrao);
     }
 }

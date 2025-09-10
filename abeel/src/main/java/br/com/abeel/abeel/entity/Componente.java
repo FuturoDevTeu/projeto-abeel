@@ -27,11 +27,13 @@ public class Componente {
     @Column(name = "nome", nullable = false)
     private String nome;
 
+    @OneToOne
+    @JoinColumn(name = "componente")
     @Column(name = "situacao", nullable = false)
-    private boolean situacao;
+    private Situacao situacao;
 
     @Lob
-    @Column(name = "imagem", nullable = true, columnDefinition = "LONGBLOB")
+    @Column(name = "imagem", columnDefinition = "LONGBLOB")
     private byte[] imagem;
 
     @Column(name = "observacao")
@@ -44,7 +46,7 @@ public class Componente {
     @JoinColumn(name = "elevador_id")
     private Elevador elevador;
 
-    public Componente(String nome, boolean situacao, byte[] imagem, String observacao, boolean hePadrao, Elevador elevador) {
+    public Componente(String nome, Situacao situacao, byte[] imagem, String observacao, boolean hePadrao, Elevador elevador) {
         this.nome = nome;
         this.situacao = situacao;
         this.imagem = imagem;

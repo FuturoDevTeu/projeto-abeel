@@ -1,6 +1,6 @@
 package br.com.abeel.abeel.controller.dto;
 
-import java.util.List;
+import java.util.UUID;
 
-public record PredioEntradaDto(String nome, String bairro, List<ElevadorEntradaDto> elevadores){
+public record PredioEntradaDto(String nome, String bairro, UUID idEmpresa){
 }

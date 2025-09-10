@@ -30,18 +30,16 @@ public class Predio {
     private String bairro;
 
     @OneToMany(mappedBy = "predio", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("elevadores")
     private List<Elevador> elevadores;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "empresa_id")
+    private Empresa empresa;
 
-    public Predio(UUID id, String nome, String bairro) {
-        this.id = id;
+
+    public Predio(String nome, String bairro, Empresa empresa){
         this.nome = nome;
         this.bairro = bairro;
-    }
-
-    public Predio(String nome, String bairro){
-        this.nome = nome;
-        this.bairro = bairro;
+        this.empresa = empresa;
     }
 }

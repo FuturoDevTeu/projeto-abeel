@@ -1,10 +1,14 @@
 package br.com.abeel.abeel.service;
 
 import br.com.abeel.abeel.controller.dto.ComponenteSaidaDto;
+import br.com.abeel.abeel.controller.dto.SituacaoDto;
 import br.com.abeel.abeel.entity.Componente;
 import br.com.abeel.abeel.entity.Elevador;
+import br.com.abeel.abeel.entity.Situacao;
+import br.com.abeel.abeel.exception.*;
 import br.com.abeel.abeel.repository.ComponenteRepository;
 import br.com.abeel.abeel.repository.ElevadorRepository;
+import br.com.abeel.abeel.repository.SituacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -29,76 +31,66 @@ public class ComponenteService {
     @Autowired
     private ElevadorRepository er;
 
+    @Autowired
+    private SituacaoRepository sr;
 
-    private ResponseEntity<?> validarElevador(UUID idElevador){
-        Optional<Elevador> elevadorOptional = er.findById(idElevador);
-
-        if(elevadorOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(elevadorOptional.get());
+    private Elevador buscarPeloIdElevador(UUID idElevador){
+        return er.findById(idElevador).orElseThrow(() -> new ElevadorNaoEncontradoException("Elevador não encontrado"));
     }
-    private ResponseEntity<?> validarCamposCadastro(String nome, @Nullable MultipartFile imagem, @Nullable String observacao){
-        if (nome == null || nome.trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome está em branco"));
-        }
-    
-        if (!cr.findByNome(nome).isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Esse componente já existe"));
-        }
 
-        if(imagem != null && !imagem.isEmpty()){
-            if(!imagem.getContentType().matches("^image/.*$")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Formato de imagem inválido. Apenas imagens são permitidas."));
+    private Componente buscarPeloIdComponente(UUID idComponente){
+        return cr.findById(idComponente).orElseThrow(() -> new ComponenteNaoEncontradoException("Componente não encontrado"));
+    }
+    private void validarCamposCadastrar(String nome, @Nullable MultipartFile imagem, @Nullable String observacao){
+        if(nome.isEmpty()){
+            throw new CampoVazioException("Nome está vazio");
+        }
+        Componente componente = cr.findByNome(nome);
+        if(componente !=null){
+            throw new ComponenteJaExisteException("Componente ja existe");
+        }
+        if((imagem == null || imagem.isEmpty()) && (observacao == null || observacao.isEmpty())){
+            throw new CampoVazioException("É preciso ter uma imagem ou uma observação");
+        }
+        if(imagem != null){
+            if(!imagem.getContentType().matches("^image/.*$")){
+                throw new ImagemIncorretaException("Apenas imagem são permitidas");
             }
         }
-
-        return ResponseEntity.ok().build();
     }
-    private ResponseEntity<?> validarCamposEditar(String nome, @Nullable MultipartFile imagem, @Nullable String observacao, UUID idComponente){
-        if (nome == null || nome.trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Nome está em branco"));
+
+    private void validarCamposEditar(UUID idComponente, String nome, @Nullable MultipartFile imagem, @Nullable String observacao){
+        if(nome.isEmpty()){
+            throw new CampoVazioException("Nome está vazio");
         }
 
-        if(imagem != null && !imagem.isEmpty()){
-            if(!imagem.getContentType().matches("^image/.*$")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Formato de imagem inválido. Apenas imagens são permitidas."));
+        if(cr.existsByNomeAndIdNot(nome, idComponente)){
+            throw new ComponenteJaExisteException("Componente ja existe");
+        }
+
+        if((imagem == null || imagem.isEmpty()) && (observacao == null || observacao.isEmpty())){
+            throw new CampoVazioException("É preciso ter uma imagem ou uma observação");
+        }
+        if(imagem != null){
+            if(!imagem.getContentType().matches("^image/.*$")){
+                throw new ImagemIncorretaException("Apenas imagem são permitidas");
             }
         }
-
-        return ResponseEntity.ok().build();
-    }
-
-    private ResponseEntity<?> validarComponenteElevador(UUID idComponente, UUID idElevador){
-        ResponseEntity<?> respostaElevador = validarElevador(idElevador);
-
-        if(respostaElevador.getStatusCode() != HttpStatus.OK) {
-            return respostaElevador;
-        }
-
-        Elevador elevador = (Elevador) respostaElevador.getBody();
-        Optional<Componente> componenteOptional = cr.findByIdAndElevador(idComponente, elevador);
-
-        if(componenteOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Componente não encontrado para o elevador especificado"));
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(componenteOptional.get());
     }
 
     private void replicarParaElevadores(Componente componentePadrao) {
         List<Elevador> elevadores = StreamSupport.stream(er.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+                .toList();
 
         for (Elevador elevador : elevadores) {
             boolean jaExiste = elevador.getComponentes().stream()
                     .anyMatch(c -> c.getNome().equalsIgnoreCase(componentePadrao.getNome()));
 
+            Situacao situacao = sr.findByNome(Situacao.Values.APROVADO.name());
             if (!jaExiste) {
                 Componente novoComponente = new Componente(
                         componentePadrao.getNome(),
-                        true,
+                        situacao,
                         null,
                         "",
                         false,
@@ -111,34 +103,26 @@ public class ComponenteService {
     public ResponseEntity<?> cadastrar(
             UUID idElevador,
             String nome,
-            boolean situacao,
+            SituacaoDto situacao,
             @Nullable MultipartFile imagem,
             String observacao,
             boolean hePadrao
         ){
-        ResponseEntity<?> respostaElevador = validarElevador(idElevador);
-        if(respostaElevador.getStatusCode() != HttpStatus.OK) {
-            return respostaElevador;
-        }
-        Elevador elevador = (Elevador) respostaElevador.getBody();
-
-        ResponseEntity<?> respostaCampos = validarCamposCadastro(nome, imagem, observacao);
-        if(respostaCampos.getStatusCode() != HttpStatus.OK) {
-            return respostaCampos;
-        }
-
+        Elevador elevador = buscarPeloIdElevador(idElevador);
+        validarCamposCadastrar(nome, imagem, observacao);
         byte[] imagemBytes = null;
         if (imagem != null && !imagem.isEmpty()) {
             try {
                 imagemBytes = imagem.getBytes();
             } catch (IOException ex) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error","Erro ao processar a imagem: " + ex.getMessage()));
+                throw new ImagemIncorretaException("Erro ao processar a imagem: " + ex.getMessage());
             }
         }
 
+        Situacao situacaoO = sr.findByNome(Situacao.Values.valueOf(situacao.name()).getRegistro());
         var componente = new Componente(
                 nome,
-                situacao,
+                situacaoO,
                 imagemBytes,
                 observacao,
                 hePadrao,
@@ -154,14 +138,7 @@ public class ComponenteService {
     }
 
     public ResponseEntity<?> listar(UUID idElevador){
-        ResponseEntity<?> respostaElevador = validarElevador(idElevador);
-
-        if (respostaElevador.getStatusCode() != HttpStatus.OK) {
-            return respostaElevador;
-        }
-
-        Elevador elevador = (Elevador) respostaElevador.getBody();
-
+        Elevador elevador = buscarPeloIdElevador(idElevador);
         List<Componente> listaComponentes = cr.findAllByElevador(elevador);
         List<ComponenteSaidaDto> dtoList = listaComponentes.stream()
                 .map(ComponenteSaidaDto::fromEntity)
@@ -178,54 +155,30 @@ public class ComponenteService {
     }
 
     public ResponseEntity<?> buscar(UUID idElevador, String nome){
-        ResponseEntity<?> respostaElevador = validarElevador(idElevador);
-
-        if (respostaElevador.getStatusCode() != HttpStatus.OK) {
-            return respostaElevador;
-        }
-
-        Elevador elevador = (Elevador) respostaElevador.getBody();
-
+        Elevador elevador = buscarPeloIdElevador(idElevador);
         List<Componente> listaComponentes = cr.findAllByNomeContainingAndElevador(nome, elevador);
-
         List<ComponenteSaidaDto> dtoList = listaComponentes.stream()
                 .map(ComponenteSaidaDto::fromEntity)
                 .toList();
         return ResponseEntity.status(HttpStatus.OK).body(dtoList);
     }
 
-    public ResponseEntity<?> remover(UUID idElevador, UUID idComponente){
-        ResponseEntity<?> respostaComponente = validarComponenteElevador(idComponente, idElevador);
-
-        if(respostaComponente.getStatusCode() != HttpStatus.OK) {
-            return respostaComponente;
-        }
-
-        Componente componente = (Componente) respostaComponente.getBody();
-
+    public ResponseEntity<?> remover(UUID idComponente){
+        Componente componente = buscarPeloIdComponente(idComponente);
         cr.delete(componente);
         return ResponseEntity.status(HttpStatus.OK).body("Componente deletado com sucesso");
     }
 
     public ResponseEntity<?> editar(
-            UUID idElevador,
             UUID idComponente,
             String nome,
-            boolean situacao,
+            SituacaoDto situacaoDto,
             @Nullable MultipartFile imagem,
             String observacao,
             boolean hePadrao
     ){
-        ResponseEntity<?> respostaComponente = validarComponenteElevador(idComponente, idElevador);
-        ResponseEntity<?> respostaCampos = validarCamposEditar(nome, imagem, observacao, idComponente);
-
-
-        if(respostaComponente.getStatusCode() != HttpStatus.OK) {
-            return respostaComponente;
-        }
-        if(respostaCampos.getStatusCode() != HttpStatus.OK) {
-            return respostaCampos;
-        }
+        Componente componente = buscarPeloIdComponente(idComponente);
+        validarCamposEditar(idComponente, nome, imagem, observacao);
         byte[] imagemBytes = null;
         if (imagem != null && !imagem.isEmpty()) {
             try {
@@ -235,8 +188,7 @@ public class ComponenteService {
             }
         }
 
-        Componente componente = (Componente) respostaComponente.getBody();
-
+        Situacao situacao = sr.findByNome(Situacao.Values.valueOf(situacaoDto.name()).getRegistro());
         componente.setNome(nome);
         componente.setSituacao(situacao);
         componente.setImagem(imagemBytes);

@@ -3,10 +3,12 @@ package br.com.abeel.abeel.service;
 import br.com.abeel.abeel.controller.dto.ComponenteEntradaDto;
 import br.com.abeel.abeel.controller.dto.ElevadorEntradaDto;
 import br.com.abeel.abeel.controller.dto.ElevadorSaidaDto;
-import br.com.abeel.abeel.converter.UUIDConverter;
 import br.com.abeel.abeel.entity.Componente;
 import br.com.abeel.abeel.entity.Elevador;
 import br.com.abeel.abeel.entity.Predio;
+import br.com.abeel.abeel.exception.CampoVazioException;
+import br.com.abeel.abeel.exception.ElevadorNaoEncontradoException;
+import br.com.abeel.abeel.exception.PredioNaoEncontradoException;
 import br.com.abeel.abeel.repository.ComponenteRepository;
 import br.com.abeel.abeel.repository.ElevadorRepository;
 import br.com.abeel.abeel.repository.PredioRepository;
@@ -24,11 +26,9 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional; // Importe Optional
-import java.util.UUID;
 
 @Service
 public class ElevadorService {
@@ -40,63 +40,31 @@ public class ElevadorService {
     private PredioRepository pr;
 
     @Autowired
+    private PredioService ps;
+
+    @Autowired
     private ComponenteRepository cr;
 
-    private ResponseEntity<?> validarCampos(ElevadorEntradaDto dto){
-        if(dto.modelo() == null || dto.modelo().trim().isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Modelo está em branco"));
-        if(!dto.modelo().matches("^[\\p{L}\\p{N} ]{3,}$")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error","Modelo inválido"));
-        return ResponseEntity.status(HttpStatus.OK).build();
+    private Predio buscarPredio(UUID id){
+        return pr.findById(id).orElseThrow(() -> new PredioNaoEncontradoException("Predio não encontrado"));
+    }
+    private Elevador buscarElevador(UUID id){
+        return er.findById(id).orElseThrow(() -> new ElevadorNaoEncontradoException("Elevador não encontrado"));
     }
 
-    private ResponseEntity<?> validarPredio(UUID idPredio){
-        var predioOptional = pr.findById(idPredio);
-        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Prédio não encontrado"));
-        return ResponseEntity.status(HttpStatus.OK).body(predioOptional.get());
-    }
-
-    private ResponseEntity<?> validarElevadorPredio(UUID idPredio, UUID idElevaodr){
-        var predioOptional = pr.findById(idPredio);
-        if(predioOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Prédio não encontrado"));
-
-        var elevadorOptional = er.findByIdAndPredio(idElevaodr, predioOptional.get());
-        if(elevadorOptional.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
-
-        return ResponseEntity.status(HttpStatus.OK).body(elevadorOptional.get());
-    }
-
-
-    private Optional<Elevador> findElevadorEntityById(UUID idElevador){
-        byte[] idBytes = UUIDConverter.toBytes(idElevador);
-        return er.findByIdBinary(idBytes);
-    }
-
-    public ResponseEntity<?> buscarId(UUID idElevador){
-
-        Optional<Elevador> elevadorOptional = findElevadorEntityById(idElevador);
-
-        if(elevadorOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado"));
+    private void validarCampos(ElevadorEntradaDto dto){
+        if(dto.modelo().isEmpty()){
+            throw new CampoVazioException("Modelo está vazio");
         }
-
-        Elevador elevador = elevadorOptional.get();
-        ElevadorSaidaDto dto = new ElevadorSaidaDto(elevador); // Convertendo a entidade para DTO de saída
-        return ResponseEntity.ok().body(dto);
     }
 
     public ResponseEntity<?> cadastrar(UUID idPredio, ElevadorEntradaDto dto){
-        ResponseEntity<?> respostaPredio = validarPredio(idPredio);
-        ResponseEntity<?> respostaCampos = validarCampos(dto);
-
-        if(respostaPredio.getStatusCode() != HttpStatus.OK) return respostaPredio;
-        if (respostaCampos.getStatusCode() != HttpStatus.OK) return respostaCampos;
-
-        var predio = (Predio) respostaPredio.getBody();
-
+        Predio predio = buscarPredio(idPredio);
+        validarCampos(dto);
 
         var elevador = new Elevador(
                 dto.modelo(),
-                predio,
-                new ArrayList<>()
+                predio
         );
 
         er.save(elevador);
@@ -105,7 +73,7 @@ public class ElevadorService {
         for(Componente componente : listaComponentes){
             Componente novoComponente = new Componente(
                     componente.getNome(),
-                    componente.isSituacao(),
+                    componente.getSituacao(),
                     componente.getImagem(),
                     componente.getObservacao(),
                     false,
@@ -113,96 +81,50 @@ public class ElevadorService {
             );
             cr.save(novoComponente);
         }
-
-
         return ResponseEntity.status(HttpStatus.CREATED).body("Elevador cadastrado com sucesso");
     }
 
     public ResponseEntity<?> listar(UUID idPredio){
-        ResponseEntity<?> respostaPredio = validarPredio(idPredio);
-
-        if (respostaPredio.getStatusCode() != HttpStatus.OK) return respostaPredio;
-
-        var predio = (Predio) respostaPredio.getBody();
+        Predio predio = buscarPredio(idPredio);
 
         List<Elevador> listaElevadores = er.findAllByPredio(predio);
-        List<ElevadorSaidaDto> dtoList = new ArrayList<>();
-        for(Elevador elevador : listaElevadores){
-            List<ComponenteEntradaDto> listComponente = new ArrayList<>();
-            for(Componente componente : elevador.getComponentes()){
-                listComponente.add(new ComponenteEntradaDto(
-                        componente.getNome(),
-                        componente.isSituacao(),
-                        componente.getImagem(),
-                        componente.getObservacao(),
-                        componente.isHePadrao()
-                        ));
-            }
-            dtoList.add(new ElevadorSaidaDto(elevador.getId(), elevador.getModelo(), listComponente, elevador.getPredio().getId()));
-        }
-
+        List<ElevadorSaidaDto> dtoList = listaElevadores.stream()
+                .map(ElevadorSaidaDto::paraDto)
+                .toList();
         return ResponseEntity.status(HttpStatus.OK).body(dtoList);
     }
 
     public ResponseEntity<?> buscar(UUID idPredio, String modelo){
-        ResponseEntity<?> respostaPredio = validarPredio(idPredio);
-
-        if(respostaPredio.getStatusCode() != HttpStatus.OK) return respostaPredio;
-
-        var predio = (Predio) respostaPredio.getBody();
+        Predio predio  = buscarPredio(idPredio);
 
         List<Elevador> listaElevadores = er.findAllByModeloContainingAndPredio(modelo, predio);
-        List<ElevadorSaidaDto> dtoList = new ArrayList<>();
-        for(Elevador elevador : listaElevadores){
-            List<ComponenteEntradaDto> listaComponente = new ArrayList<>();
-            for(Componente componente : elevador.getComponentes()){
-                listaComponente.add( new ComponenteEntradaDto(
-                        componente.getNome(),
-                        componente.isSituacao(),
-                        componente.getImagem(),
-                        componente.getObservacao(),
-                        componente.isHePadrao()
-                        ));
-            }
-            dtoList.add(new ElevadorSaidaDto(elevador.getId(), elevador.getModelo(), listaComponente, elevador.getPredio().getId()));
-        }
+        List<ElevadorSaidaDto> dtoList = listaElevadores.stream()
+                .map(ElevadorSaidaDto::paraDto)
+                .toList();
         return ResponseEntity.status(HttpStatus.OK).body(dtoList);
     }
 
-    public ResponseEntity<?> remover(UUID idPredio, UUID idElevador){
-        ResponseEntity<?> respostaElevador = validarElevadorPredio(idPredio, idElevador);
+    public ResponseEntity<?> buscarPeloId(UUID idElevador){
+        Elevador elevador = er.findById(idElevador)
+                .orElseThrow(() -> new ElevadorNaoEncontradoException("Elevador não encontrado"));
+        return ResponseEntity.ok().body(elevador);
+    }
 
-        if(respostaElevador.getStatusCode() != HttpStatus.OK) return respostaElevador;
-
-        var elevador = (Elevador) respostaElevador.getBody();
-
+    public ResponseEntity<?> remover(UUID idElevador){
+        Elevador elevador = buscarElevador(idElevador);
         er.delete(elevador);
-
         return ResponseEntity.status(HttpStatus.OK).body("Elevador removido com sucesso");
     }
 
-    public ResponseEntity<?> editar(UUID idPredio, UUID idElevador, ElevadorEntradaDto dto){
-        ResponseEntity<?> respostaElevador = validarElevadorPredio(idPredio, idElevador);
-        ResponseEntity<?> respostaCampos = validarCampos(dto);
-
-        if(respostaElevador.getStatusCode() !=HttpStatus.OK) return respostaElevador;
-        if(respostaCampos.getStatusCode() != HttpStatus.OK) return respostaCampos;
-
-
-        var elevador = (Elevador) respostaElevador.getBody();
+    public ResponseEntity<?> editar(UUID idElevador, ElevadorEntradaDto dto){
+        Elevador elevador = buscarElevador(idElevador);
+        validarCampos(dto);
         elevador.setModelo(dto.modelo());
         er.save(elevador);
         return ResponseEntity.status(HttpStatus.OK).body("Elevador editado com sucesso");
     }
     public ResponseEntity<?> gerarRelatorio(UUID idElevador){
-        // Busca a ENTIDADE Elevador diretamente
-        Optional<Elevador> elevadorOptional = findElevadorEntityById(idElevador);
-
-        if(elevadorOptional.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","Elevador não encontrado para o relatório"));
-        }
-
-        Elevador elevador = elevadorOptional.get(); // <--- AGORA AQUI É REALMENTE UM Elevador!
+        Elevador elevador = buscarElevador(idElevador);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -211,9 +133,11 @@ public class ElevadorService {
         PdfWriter.getInstance(document, baos);
         document.open();
 
+        LocalDate dataAtual = LocalDate.now();
+        int ano = dataAtual.getYear();
         Font fonteTitulo = FontFactory.getFont(FontFactory.TIMES_BOLD);
         Paragraph titulo = new Paragraph(
-                new Chunk("RIA 2025 HOMOLOGADO PELA ABEEL", fonteTitulo)
+                new Chunk("RELATORIO DE INSPEÇÂO "+ ano, fonteTitulo)
         );
         titulo.setAlignment(Element.ALIGN_CENTER);
         document.add(titulo);
@@ -265,7 +189,7 @@ public class ElevadorService {
 
         for (Componente componente : elevador.getComponentes()){
             PdfPCell celulaNoneC = new PdfPCell(new Phrase(componente.getNome()));
-            PdfPCell celulaSituacaoC = new PdfPCell(new Phrase(componente.isSituacao() ? "Bom" : "Ruim"));
+            PdfPCell celulaSituacaoC = new PdfPCell(new Phrase(componente.getSituacao().getNome()));
             var obs = componente.getObservacao() == null ? "Não há observação" : componente.getObservacao();
             PdfPCell celulaObservacaoC = new PdfPCell(new Phrase(obs));
             tabelaConteudo.addCell(celulaNoneC);
