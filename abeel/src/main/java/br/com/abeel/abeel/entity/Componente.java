@@ -29,7 +29,6 @@ public class Componente {
 
     @OneToOne
     @JoinColumn(name = "componente")
-    @Column(name = "situacao", nullable = false)
     private Situacao situacao;
 
     @Lob
