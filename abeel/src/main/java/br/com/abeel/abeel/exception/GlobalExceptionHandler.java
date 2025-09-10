@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
-    @ExceptionHandler(EmpresaNaoEncontradaException.class)
+    @ExceptionHandler(ElevadorNaoEncontradoException.class)
     public ResponseEntity<?> handlerElevadorNaoEncontradoException(ElevadorNaoEncontradoException ex){
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
@@ -48,6 +48,7 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(ComponenteJaExisteException.class)
     public ResponseEntity<?> handlerComponenteJaExisteException(ComponenteJaExisteException ex){
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
