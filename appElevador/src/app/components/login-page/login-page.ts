@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { LoginRequest } from '../../types/LoginRequest';
-import { UserService } from '../../services/user-service';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LoginRequest } from '../../types/LoginRequest';
+import { UserService } from '../../services/user-service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -26,7 +26,7 @@ export class LoginPage {
       next: (res) => {
         console.log('Token recebido: ', res.token);
         sessionStorage.setItem("token", res.token);
-        this.route.navigate(['/predios']);
+        this.route.navigate(['/empresa']);
       },
       error: (err) => {
         if (typeof err.error === 'string') {
