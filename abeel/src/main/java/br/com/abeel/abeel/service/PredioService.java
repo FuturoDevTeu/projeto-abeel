@@ -76,11 +76,11 @@ public class PredioService {
         return ResponseEntity.status(HttpStatus.CREATED).body("Prédio criado com sucesso");
     }
 
-    public ResponseEntity<?> listar(){
-        List<Predio> lista = pr.findAll();
-        List<PredioSaidaDto> dtoList = new ArrayList<>();
-
-
+    public ResponseEntity<?> listar(UUID idEmpresa){
+        List<Predio> lista = pr.findByEmpresaId(idEmpresa);
+        List<PredioSaidaDto> dtoList = lista.stream()
+                .map(PredioSaidaDto::toDto)
+                .toList();
         return ResponseEntity.status(HttpStatus.OK).body(dtoList);
     }
 

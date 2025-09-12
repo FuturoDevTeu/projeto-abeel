@@ -18,6 +18,8 @@ public interface PredioRepository extends CrudRepository<Predio, UUID> {
     List<Predio> findByNomeContaining(String nome);
     List<Predio> findAll();
 
+    List<Predio> findByEmpresaId(UUID idEmpresa);
+
     Optional<Predio> findByNomeAndBairroAndIdNot(String nome, String bairro, UUID idPredio);
 
 

@@ -21,9 +21,9 @@ public class PredioController {
         return ps.cadastrar(dto);
     }
 
-    @GetMapping("/listar")
-    private ResponseEntity<?> listar(){
-        return ps.listar();
+    @GetMapping("/listar/empresa/{idEmpresa}")
+    private ResponseEntity<?> listar(@PathVariable UUID idEmpresa){
+        return ps.listar(idEmpresa);
     }
 
     @GetMapping("/buscar/{nome}")
