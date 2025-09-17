@@ -25,7 +25,6 @@ public class PredioController {
     private ResponseEntity<?> listar(@PathVariable UUID idEmpresa){
         return ps.listar(idEmpresa);
     }
-
     @GetMapping("/buscar/{nome}")
     private ResponseEntity<?> buscar(@PathVariable("nome") String nome){
         return ps.buscar(nome);

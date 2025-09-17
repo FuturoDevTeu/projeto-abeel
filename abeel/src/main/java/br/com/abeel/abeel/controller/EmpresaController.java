@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/empresa")
+@CrossOrigin(origins = "*")
 public class EmpresaController {
 
     @Autowired

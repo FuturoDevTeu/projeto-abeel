@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "tb_situacao")
 @Setter
@@ -18,8 +20,9 @@ public class Situacao {
     @Column(name = "nome", nullable = false, unique = true)
     private String nome;
 
-    @OneToOne(mappedBy = "situacao")
-    private Componente componente;
+    @OneToMany(mappedBy = "situacao")
+    @Column(name = "componente")
+    private List<Componente> componentes;
 
     @Getter
     public enum Values{

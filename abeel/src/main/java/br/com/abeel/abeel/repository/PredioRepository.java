@@ -15,12 +15,9 @@ public interface PredioRepository extends CrudRepository<Predio, UUID> {
     @Query("SELECT p FROM Predio p WHERE p.nome = :nome AND p.bairro = :bairro")
     Optional<Predio> findByNomeAndBairro(String nome, String bairro);
 
+    
     List<Predio> findByNomeContaining(String nome);
     List<Predio> findAll();
-
-    List<Predio> findByEmpresaId(UUID idEmpresa);
-
     Optional<Predio> findByNomeAndBairroAndIdNot(String nome, String bairro, UUID idPredio);
-
-
+    List<Predio> findByEmpresaId(UUID idEmpresa);
 }

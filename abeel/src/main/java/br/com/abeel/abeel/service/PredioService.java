@@ -31,7 +31,7 @@ public class PredioService {
         if(dto.bairro().isEmpty()){
             throw new CampoVazioException("Bairro está vazio");
         }
-        if(dto.idEmpresa() != null){
+        if(dto.idEmpresa() == null){
             throw new CampoVazioException("Empresa está vazia");
         }
         if(pr.findByNomeAndBairro(dto.nome(), dto.bairro()).isPresent()){
@@ -64,6 +64,9 @@ public class PredioService {
 
 
     public ResponseEntity<?> cadastrar(PredioEntradaDto dto){
+        System.out.println(dto.nome());
+        System.out.println(dto.bairro());
+        System.out.println(dto.idEmpresa());
         validarCadastro(dto);
 
         Empresa empresa = buscarPeloIdEmpresa(dto.idEmpresa());

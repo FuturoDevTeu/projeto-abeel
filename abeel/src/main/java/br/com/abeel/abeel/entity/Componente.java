@@ -27,8 +27,8 @@ public class Componente {
     @Column(name = "nome", nullable = false)
     private String nome;
 
-    @OneToOne
-    @JoinColumn(name = "componente")
+    @ManyToOne
+    @JoinColumn(name = "situacao_id")
     private Situacao situacao;
 
     @Lob
