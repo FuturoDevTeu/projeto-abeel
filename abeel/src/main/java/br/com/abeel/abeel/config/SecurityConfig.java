@@ -45,9 +45,9 @@
                     .csrf(csrf -> csrf.disable())
                     .oauth2ResourceServer(auth -> auth.jwt(Customizer.withDefaults()))
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
             return http.build();
         }
+
 
         @Bean
         public JwtEncoder jwtEncoder(){

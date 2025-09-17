@@ -5,7 +5,6 @@ import { LoginPage } from './components/login-page/login-page';
 import { authGuard } from './auth-guard';
 import { ComponenteList } from './components/componente-list/componente-list';
 import { Empresa } from './components/empresa/empresa';
-// As funções de pré-renderização são definidas diretamente neste arquivo.
 
 /**
  * Simula a busca por IDs de elevadores para pré-renderização.
@@ -45,7 +44,8 @@ export const routes: Routes = [
     runGuardsAndResolvers: 'always'
   },
   {
-    path: 'predios',
+    // rota agora recebe o ID da empresa
+    path: 'predios/:idEmpresa',
     component: PrediosList,
     canActivate: [authGuard],
     runGuardsAndResolvers: 'always'
@@ -55,7 +55,6 @@ export const routes: Routes = [
     component: ElevadoresComponent,
     canActivate: [authGuard],
     runGuardsAndResolvers: 'always',
-    // Agora a rota referencia a função definida no mesmo arquivo.
     data: { prerender: getElevadorPrerenderParams }
   },
   {
@@ -63,7 +62,6 @@ export const routes: Routes = [
     component: ComponenteList,
     canActivate: [authGuard],
     runGuardsAndResolvers: 'always',
-    // O mesmo para a rota de componentes.
     data: { prerender: getComponentePrerenderParams }
   },
   { path: '**', redirectTo: 'login' }

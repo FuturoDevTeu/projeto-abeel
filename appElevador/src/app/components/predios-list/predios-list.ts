@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { PredioService } from '../../services/predio-service';
 import { Predio } from '../../types/Predio';
 import { PredioRequest } from '../../types/PredioRequest';
@@ -21,49 +21,54 @@ export class PrediosList implements OnInit {
   predios: Predio[] = [];
   selectedPredioId: string | null = null;
   isModalOpen = false;
-  // O objeto 'predio' agora é usado para cadastro e edição
   predio: Predio = { id: '', nome: '', bairro: '' };
   estaCarregando: boolean = false;
   mensagem: string = "";
+  idEmpresa: string = '';
+  predioRequest: PredioRequest = {nome: "", bairro: "", idEmpresa: ""};
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private predioService: PredioService
   ) { }
 
   ngOnInit(): void {
-    this.carregarPredios();
+    // Obtém o idEmpresa da rota
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('idEmpresa');
+      console.log("O id chegou no onInit: "+ id);
+      if (id) {
+        this.idEmpresa = id;
+        this.carregarPredios();
+      } else {
+        this.mensagem = "ID da empresa não informado na rota";
+      }
+    });
   }
 
-  // Abre o modal para cadastrar um novo prédio
   abrirModalParaCadastro(): void {
-    this.predio = { id: '', nome: '', bairro: '' }; // Limpa o formulário
+    this.predio = { id: '', nome: '', bairro: '' };
     this.isModalOpen = true;
   }
 
-  // Abre o modal para editar um prédio existente
   abrirModalParaEdicao(predio: Predio): void {
-    this.predio = { ...predio }; // Preenche o formulário com os dados do prédio
+    this.predio = { ...predio };
     this.isModalOpen = true;
   }
 
-  // Fecha o modal e limpa o formulário
   fecharModal(): void {
     this.isModalOpen = false;
     this.predio = { id: '', nome: '', bairro: '' };
   }
 
-  // Método de submissão unificado
   submitForm(): void {
     if (this.predio.nome && this.predio.bairro) {
       if (this.predio.id) {
-        // Se o id existe, chama o método de atualização
         this.editarPredio(this.predio);
       } else {
-        // Se o id não existe, chama o método de cadastro
-        this.cadastrarPredio({ nome: this.predio.nome, bairro: this.predio.bairro });
-        this.carregarPredios();
+        this.cadastrarPredio({ nome: this.predio.nome, bairro: this.predio.bairro, idEmpresa: this.idEmpresa });
       }
       this.fecharModal();
     }
@@ -71,16 +76,12 @@ export class PrediosList implements OnInit {
 
   carregarPredios(): void {
     this.estaCarregando = true;
-    this.mensagem = "Carregando predios, por favor espere...";
-    this.predioService.obterPredios()
+    this.mensagem = "Carregando prédios, por favor espere...";
+    this.predioService.obterPredios(this.idEmpresa)
       .subscribe({
         next: (predios) => {
           this.predios = Array.from(predios);
-          if(this.predios.length === 0){
-            this.mensagem = "Nenhum predio encontrado";
-          }else{
-            this.mensagem = '';
-          }
+          this.mensagem = this.predios.length === 0 ? "Nenhum prédio encontrado" : '';
           this.estaCarregando = false;
           this.selectedPredioId = null;
           this.cdr.detectChanges();
@@ -96,43 +97,34 @@ export class PrediosList implements OnInit {
   }
 
   cadastrarPredio(predio: PredioRequest): void {
+
     this.predioService.cadastrarPredio(predio)
       .subscribe({
-        next: (res) => {
-          console.log(res);
-          this.cdr.detectChanges();
+        next: () => {
           this.carregarPredios();
+          this.cdr.detectChanges();
         },
         error: (err) => {
-          if(typeof err.error === 'string'){
-            window.alert(err.error);
-            this.cdr.detectChanges();
-          }else{
-            window.alert("Ocorreu um erro inesperado ");
-          } 
+          window.alert(typeof err.error === 'string' ? err.error : "Ocorreu um erro inesperado");
+          this.cdr.detectChanges();
         }
       });
   }
 
   buscarPredio(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const nomePredio = input.value
-    if(!nomePredio){
+    const nomePredio = input.value;
+    if (!nomePredio) {
       this.carregarPredios();
       return;
     }
     this.estaCarregando = true;
-    this.mensagem = "Carregando prédios, por favor espere..."
-    
+    this.mensagem = "Carregando prédios, por favor espere...";
     this.predioService.buscarPredio(nomePredio)
-    .subscribe({
+      .subscribe({
         next: (predios) => {
           this.predios = Array.from(predios);
-          if(this.predios.length === 0){
-            this.mensagem = "Nenhum prédio encontrado";
-          }else{
-            this.mensagem = '';
-          }
+          this.mensagem = this.predios.length === 0 ? "Nenhum prédio encontrado" : '';
           this.estaCarregando = false;
           this.selectedPredioId = null;
           this.cdr.detectChanges();
@@ -150,18 +142,13 @@ export class PrediosList implements OnInit {
     if (confirm('Tem certeza que deseja deletar este prédio?')) {
       this.predioService.deletarPredio(idPredio)
         .subscribe({
-          next: (res) => {
-            console.log(res);
+          next: () => {
             this.carregarPredios();
-            this.cdr.detectChanges();            
+            this.cdr.detectChanges();
           },
           error: (err) => {
-            if(typeof err.error === 'string'){
-              window.alert(err.error);
-              this.cdr.detectChanges();
-            }else{
-              window.alert("Ocorreu um erro inesperado ");
-            } 
+            window.alert(typeof err.error === 'string' ? err.error : "Ocorreu um erro inesperado");
+            this.cdr.detectChanges();
           }
         });
     }
@@ -170,18 +157,13 @@ export class PrediosList implements OnInit {
   editarPredio(predio: Predio): void {
     this.predioService.editarPredio(predio)
       .subscribe({
-        next: (res) => {
-          console.log(res);
-          this.cdr.detectChanges();
+        next: () => {
           this.carregarPredios();
+          this.cdr.detectChanges();
         },
         error: (err) => {
-          if(typeof err.error === 'string'){
-            window.alert(err.error);
-            this.cdr.detectChanges();
-          }else{
-            window.alert("Ocorreu um erro inesperado ");
-          } 
+          window.alert(typeof err.error === 'string' ? err.error : "Ocorreu um erro inesperado");
+          this.cdr.detectChanges();
         }
       });
   }

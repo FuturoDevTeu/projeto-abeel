@@ -1,0 +1,46 @@
+<!-- Modal -->
+<div class="modal" [ngClass]="{'open': isModalOpen}">
+  <div class="modal-content">
+    <span class="close" (click)="fecharModal()">&times;</span>
+
+    <h2>{{ empresa.id ? 'Atualizar Empresa' : 'Cadastrar Empresa' }}</h2>
+    <form>
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" [(ngModel)]="empresa.nome" required>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" mat-raised-button color="primary" (click)="submitForm()">
+          {{ empresa.id ? 'Atualizar' : 'Cadastrar' }}
+        </button>
+        <button type="button" class="close-button" (click)="fecharModal()">Fechar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Lista de empresas -->
+<div class="empresas-container">
+  <div class="header">
+    <img src="/icon-add.png" alt="Adicionar Empresa" class="icon-add" (click)="abrirModalParaCadastro()">
+  </div>
+
+  <mat-card *ngFor="let empresa of empresas"
+            class="empresa-card"
+            [class.selected]="empresa.id === selectedEmpresaId">
+    <mat-card-content (click)="selecionarEmpresa(empresa.id)">
+      <h3>{{ empresa.nome }}</h3>
+    </mat-card-content>
+
+    <div class="card-actions">
+      <mat-icon class="icon-button edit-icon" (click)="abrirModalParaEdicao(empresa); $event.stopPropagation()">edit</mat-icon>
+      <mat-icon class="icon-button delete-icon" (click)="deletarEmpresa(empresa.id); $event.stopPropagation()">delete</mat-icon>
+    </div>
+  </mat-card>
+
+  <div *ngIf="mensagem" class="no-empresas-message">
+    <p>{{mensagem}}</p>
+    <div *ngIf="estaCarregando" class="spinner"></div>
+  </div>
+</div>
