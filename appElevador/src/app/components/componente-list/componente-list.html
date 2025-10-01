@@ -1,4 +1,5 @@
 <div class="checklist-container">
+  <!-- Cabeçalho -->
   <div class="page-header">
     <h2>Checklist</h2>
     <div class="box-button">
@@ -8,6 +9,7 @@
     </div>
   </div>
 
+  <!-- Tabela de componentes -->
   <div class="table-responsive">
     <table class="componente-table">
       <thead>
@@ -16,15 +18,15 @@
           <th>Situação</th>
           <th>Imagem</th>
           <th>Observação</th>
-          <th>Ações</th> </tr>
+          <th>Ações</th>
+        </tr>
       </thead>
       <tbody>
         <tr *ngFor="let componente of componentes">
           <td>{{ componente.nome }}</td>
           <td>
-            <span [class.situacao-bom]="componente.situacao" [class.situacao-ruim]="!componente.situacao">
-              {{ componente.situacao ? "Bom" : "Ruim"}}
-            </span>
+            <span class="status-label" [ngClass]="'status-' + (componente.situacao || '')">
+              {{ componente.situacao }} </span>
           </td>
           <td>
             <img *ngIf="componente.imagemBase64" [src]="componente.imagemBase64" alt="Imagem do componente" class="component-image">
@@ -41,69 +43,83 @@
     </table>
   </div>
 
+  <!-- MODAL -->
   <div class="modal-overlay" *ngIf="isModalOpen">
     <div class="modal-content">
       <div class="form-card">
         <div class="form-title">
           <h3>{{ isEditingMode ? 'Editar Componente' : 'Adicionar Novo Componente' }}</h3>
-          <button class="close-button" (click)="fecharModal()">
-            <mat-icon>close</mat-icon>
-          </button>
+          <button class="close-button" (click)="fecharModal()">×</button>
         </div>
+
         <div class="form-content">
+          <!-- Nome -->
           <div class="input-group">
             <label for="nome-modal">Nome:</label>
             <input type="text" id="nome-modal" placeholder="Insira o nome" [(ngModel)]="componenteRequest.nome" class="text-input" name="nomeModal">
           </div>
 
-          <div class="input-group conditional-field-animation"
-                [class.show]="!componenteRequest.situacao">
-            <label for="observacao-modal">Observação:</label>
-            <input type="text" id="observacao-modal" placeholder="Insira a Observação" [(ngModel)]="componenteRequest.observacao" class="text-input" name="observacaoModal">
+          <!-- Situação (radio buttons) -->
+          <div class="input-group radio-group">
+            <label>Situação:</label>
+            <div class="radio-options-container">
+              <label class="radio-option">
+                <input type="radio" name="situacaoModal" [(ngModel)]="componenteRequest.situacao" value="APROVADO">
+                <span>Aprovado</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="situacaoModal" [(ngModel)]="componenteRequest.situacao" value="REPROVADO">
+                <span>Reprovado</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="situacaoModal" [(ngModel)]="componenteRequest.situacao" value="SIM">
+                <span>Sim</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="situacaoModal" [(ngModel)]="componenteRequest.situacao" value="NAO">
+                <span>Não</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="situacaoModal" [(ngModel)]="componenteRequest.situacao" value="NAO_SE_APLICA">
+                <span>Não se aplica</span>
+              </label>
+            </div>
           </div>
 
-          <div class="input-group conditional-field-animation"
-                [class.show]="!componenteRequest.situacao">
+          <!-- Observação -->
+          <div class="input-group">
+            <label for="observacao-modal">Observação:</label>
+            <input type="text" id="observacao-modal" placeholder="Insira a observação" [(ngModel)]="componenteRequest.observacao" class="text-input" name="observacaoModal">
+          </div>
+
+          <!-- Imagem -->
+          <div class="input-group">
             <label for="imagem-modal">Imagem:</label>
             <input type="file" id="imagem-modal" (change)="arquivoSelecionado($event)" class="file-input">
             <img *ngIf="currentImageBase64" [src]="currentImageBase64" alt="Imagem atual" class="modal-current-image">
           </div>
 
-          <div class="radio-group-wrapper">
-            <div class="input-group radio-group">
-              <label>Situação:</label>
-              <div class="radio-options-container">
-                <label class="radio-option">
-                  <input type="radio" name="situacaoModal" [(ngModel)]="componenteRequest.situacao" [value]="true">
-                  <span>Bom</span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="situacaoModal" [(ngModel)]="componenteRequest.situacao" [value]="false">
-                  <span>Ruim</span>
-                </label>
-              </div>
-            </div>
-
-            <div class="input-group radio-group">
-              <label>Padrão:</label>
-              <div class="radio-options-container">
-                <label class="radio-option">
-                  <input type="radio" name="padraoModal" [(ngModel)]="componenteRequest.hePadrao" [value]="true">
-                  <span>Padrão</span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="padraoModal" [(ngModel)]="componenteRequest.hePadrao" [value]="false">
-                  <span>Não padrão</span>
-                </label>
-              </div>
+          <!-- Padrão -->
+          <div class="input-group radio-group">
+            <label>Padrão:</label>
+            <div class="radio-options-container">
+              <label class="radio-option">
+                <input type="radio" name="padraoModal" [(ngModel)]="componenteRequest.hePadrao" [value]="true">
+                <span>Padrão</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="padraoModal" [(ngModel)]="componenteRequest.hePadrao" [value]="false">
+                <span>Não padrão</span>
+              </label>
             </div>
           </div>
+
+          <!-- Botão salvar -->
+          <button type="button" class="btn btn-accent" (click)="salvarFormulario()">
+            {{ isEditingMode ? 'Salvar Edição' : 'Cadastrar' }}
+          </button>
         </div>
-        
-        <button type="button" class="btn btn-accent" (click)="salvarFormulario()">
-          {{ isEditingMode ? 'Salvar Edição' : 'Cadastrar' }}
-        </button>
       </div>
     </div>
   </div>
-  </div>
+</div>

@@ -140,6 +140,9 @@ public class ComponenteService {
     public ResponseEntity<?> listar(UUID idElevador){
         Elevador elevador = buscarPeloIdElevador(idElevador);
         List<Componente> listaComponentes = cr.findAllByElevador(elevador);
+        for(Componente componente : listaComponentes){
+            System.out.println(componente.getNome());
+        }
         List<ComponenteSaidaDto> dtoList = listaComponentes.stream()
                 .map(ComponenteSaidaDto::fromEntity)
                 .toList();
