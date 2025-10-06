@@ -17,26 +17,26 @@ public class PredioController {
     private PredioService ps;
 
     @PostMapping("/cadastrar")
-    private ResponseEntity<?> cadastrar(@RequestBody PredioEntradaDto dto){
+    public ResponseEntity<?> cadastrar(@RequestBody PredioEntradaDto dto){
         return ps.cadastrar(dto);
     }
 
     @GetMapping("/listar/empresa/{idEmpresa}")
-    private ResponseEntity<?> listar(@PathVariable UUID idEmpresa){
+    public ResponseEntity<?> listar(@PathVariable UUID idEmpresa){
         return ps.listar(idEmpresa);
     }
     @GetMapping("/buscar/{nome}")
-    private ResponseEntity<?> buscar(@PathVariable("nome") String nome){
+    public ResponseEntity<?> buscar(@PathVariable("nome") String nome){
         return ps.buscar(nome);
     }
 
     @DeleteMapping("/deletar/{idPredio}")
-    private ResponseEntity<?> remover(@PathVariable("idPredio") UUID idPredio){
+    public ResponseEntity<?> remover(@PathVariable("idPredio") UUID idPredio){
         return ps.remover(idPredio);
     }
 
     @PutMapping("/editar/{idPredio}")
-    private ResponseEntity<?> editar(@PathVariable("idPredio") UUID idPredio, @RequestBody PredioEntradaDto dto){
+    public ResponseEntity<?> editar(@PathVariable("idPredio") UUID idPredio, @RequestBody PredioEntradaDto dto){
         return ps.editar(dto, idPredio);
     }
 }

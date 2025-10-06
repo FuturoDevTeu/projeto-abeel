@@ -20,34 +20,34 @@ public class ElevadorController {
     private ElevadorService es;
 
     @PostMapping("/{idPredio}/cadastrar")
-    private ResponseEntity<?> cadastrar(@PathVariable("idPredio") UUID idPredio, @RequestBody ElevadorEntradaDto dto){return es.cadastrar(idPredio, dto);}
+    public ResponseEntity<?> cadastrar(@PathVariable("idPredio") UUID idPredio, @RequestBody ElevadorEntradaDto dto){return es.cadastrar(idPredio, dto);}
 
     @GetMapping("/{idPredio}/listar")
-    private ResponseEntity<?> listar(@PathVariable("idPredio") UUID idPredio){
+    public ResponseEntity<?> listar(@PathVariable("idPredio") UUID idPredio){
         return es.listar(idPredio);
     }
 
     @GetMapping("/{idPredio}/{modelo}")
-    private ResponseEntity<?> buscar(@PathVariable("idPredio") UUID idPredio, @PathVariable String modelo){
+    public ResponseEntity<?> buscar(@PathVariable("idPredio") UUID idPredio, @PathVariable String modelo){
         return es.buscar(idPredio, modelo);
     }
     @GetMapping("/{idElevador}/buscar")
-    private ResponseEntity<?> buscarId(@PathVariable("idElevador") UUID idElevador){
+    public ResponseEntity<?> buscarId(@PathVariable("idElevador") UUID idElevador){
         return es.buscarPeloId(idElevador);
     }
 
     @DeleteMapping("/{idElevador}")
-    private ResponseEntity<?> remover(@PathVariable("idElevador") UUID idElevador){
+    public ResponseEntity<?> remover(@PathVariable("idElevador") UUID idElevador){
         return es.remover(idElevador);
     }
 
     @PutMapping("/{idElevador}")
-    private ResponseEntity<?> editar(@PathVariable("idElevador") UUID idElevador, @RequestBody ElevadorEntradaDto dto){
+    public ResponseEntity<?> editar(@PathVariable("idElevador") UUID idElevador, @RequestBody ElevadorEntradaDto dto){
         return es.editar(idElevador, dto);
     }
 
     @GetMapping("/{idElevador}/relatorio")
-    private ResponseEntity<?> gerarRelatorio(@PathVariable("idElevador") UUID idElevador){
+    public ResponseEntity<?> gerarRelatorio(@PathVariable("idElevador") UUID idElevador){
         var resposta = es.gerarRelatorio(idElevador);
 
         if(resposta.getStatusCode() != HttpStatus.OK) return resposta;

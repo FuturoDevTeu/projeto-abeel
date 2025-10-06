@@ -31,12 +31,12 @@ export class ElevadorService {
     return this.httpClient.get<Elevador>(this.url+"/elevador/"+idElevador+"/buscar");
   }
 
-  removerElevadorDoPredio(idPredio: string, idElevador: string): Observable<any>{
-    return this.httpClient.delete(this.url+"/elevador/"+idPredio+"/"+idElevador, { responseType: 'text'});
+  removerElevadorDoPredio( idElevador: string): Observable<any>{
+    return this.httpClient.delete(this.url+"/elevador/"+idElevador, { responseType: 'text'});
   }
 
-  editarElevadorDoPredio(idPredio: string, idElevador: string, elevador: ElevadorRequest): Observable<any>{
-    return this.httpClient.put(this.url+"/elevador/"+idPredio+"/"+idElevador, elevador, { responseType: 'text'});
+  editarElevadorDoPredio(idElevador: string, elevador: ElevadorRequest): Observable<any>{
+    return this.httpClient.put(this.url+"/elevador/"+idElevador, elevador, { responseType: 'text'});
   }
 
   gerarRelatorio(idElevador: string): Observable<Blob>{

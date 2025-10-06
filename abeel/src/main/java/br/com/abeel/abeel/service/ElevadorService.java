@@ -107,7 +107,8 @@ public class ElevadorService {
     public ResponseEntity<?> buscarPeloId(UUID idElevador){
         Elevador elevador = er.findById(idElevador)
                 .orElseThrow(() -> new ElevadorNaoEncontradoException("Elevador não encontrado"));
-        return ResponseEntity.ok().body(elevador);
+        ElevadorSaidaDto dto = ElevadorSaidaDto.paraDto(elevador);
+        return ResponseEntity.ok().body(dto);
     }
 
     public ResponseEntity<?> remover(UUID idElevador){

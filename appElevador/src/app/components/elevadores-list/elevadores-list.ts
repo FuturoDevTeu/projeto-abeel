@@ -82,8 +82,6 @@ export class ElevadoresComponent implements OnInit {
   // Inicializa o componente ao carregar a página.
   ngOnInit(): void {
     this.predioId = this.route.snapshot.paramMap.get('id');
-    console.log("Id do predio: "+ this.predioId);
-
     if (this.predioId) {
       this.carregarElevadoresDoPredio(this.predioId);
     } else {
@@ -142,10 +140,9 @@ export class ElevadoresComponent implements OnInit {
 
   // Envia uma requisição para editar um elevador existente.
   editarElevadorNoPredio(idPredio: string, idElevador: string, elevador: Elevador | ElevadorRequest): void {
-    this.elevadorService.editarElevadorDoPredio(idPredio, idElevador, elevador)
+    this.elevadorService.editarElevadorDoPredio(idElevador, elevador)
     .subscribe({
       next: (res) => {
-        console.log('Elevador editado com sucesso:', res);
         this.carregarElevadoresDoPredio(idPredio);
       },
       error: (err) => {
@@ -163,7 +160,7 @@ export class ElevadoresComponent implements OnInit {
   deletarElevador(idElevador: string): void {
     if (this.predioId) {
       if (window.confirm('Tem certeza que deseja deletar este elevador?')) {
-        this.elevadorService.removerElevadorDoPredio(this.predioId, idElevador)
+        this.elevadorService.removerElevadorDoPredio(idElevador)
         .subscribe({
           next: () => {
             console.log('Elevador removido com sucesso.');

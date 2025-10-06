@@ -46,9 +46,7 @@ public class PredioService {
         if(dto.bairro().isEmpty()){
             throw new CampoVazioException("Bairro está vazio");
         }
-        if(dto.idEmpresa() != null){
-            throw new CampoVazioException("Empresa está vazio");
-        }
+
         if(pr.findByNomeAndBairroAndIdNot(dto.nome(), dto.bairro(), idPredio).isPresent()){
             throw new PredioJaExisteException("Predio já existe");
         }
@@ -107,9 +105,6 @@ public class PredioService {
 
         predio.setBairro(dto.bairro());
         predio.setNome(dto.nome());
-        Empresa empresaEncontrado = buscarPeloIdEmpresa(dto.idEmpresa());
-        predio.setEmpresa(empresaEncontrado);
-
         pr.save(predio);
         return ResponseEntity.status(HttpStatus.OK).body("Prédio alterado com sucesso");
     }

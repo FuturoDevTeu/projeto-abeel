@@ -10,12 +10,13 @@ public enum SituacaoDto {
     NAO,
     NAO_SE_APLICA;
     public static SituacaoDto fromEntity(Situacao situacao){
+        System.out.println(situacao.getNome());
         return switch (situacao.getNome().toUpperCase()){
             case "APROVADO" -> APROVADO;
             case "REPROVADO" -> REPROVADO;
             case "SIM" -> SIM;
-            case "NAO" -> NAO;
-            case "NÂO SE APLICA", "NAO SE APLICA" -> NAO_SE_APLICA;
+            case "NAO", "NÃO" -> NAO;
+            case "NÃO SE APLICA", "NAO SE APLICA" -> NAO_SE_APLICA;
             default -> throw new CampoVazioException("Situacao não encontrado: "+ situacao.getNome());
         };
     }

@@ -26,7 +26,7 @@
           <td>{{ componente.nome }}</td>
           <td>
             <span class="status-label" [ngClass]="'status-' + (componente.situacao || '')">
-              {{ componente.situacao }} </span>
+              {{ situacoesLabels[componente.situacao] || componente.situacao }}</span>
           </td>
           <td>
             <img *ngIf="componente.imagemBase64" [src]="componente.imagemBase64" alt="Imagem do componente" class="component-image">

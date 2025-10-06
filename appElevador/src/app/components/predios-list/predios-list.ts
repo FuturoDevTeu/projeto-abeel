@@ -21,7 +21,7 @@ export class PrediosList implements OnInit {
   predios: Predio[] = [];
   selectedPredioId: string | null = null;
   isModalOpen = false;
-  predio: Predio = { id: '', nome: '', bairro: '' };
+  predio: Predio = { id: '', nome: '', bairro: ''};
   estaCarregando: boolean = false;
   mensagem: string = "";
   idEmpresa: string = '';
@@ -66,7 +66,11 @@ export class PrediosList implements OnInit {
   submitForm(): void {
     if (this.predio.nome && this.predio.bairro) {
       if (this.predio.id) {
-        this.editarPredio(this.predio);
+        console.log("Peguei o id", this.predio.id)
+        this.editarPredio(this.predio.id, {
+          nome: this.predio.nome,
+          bairro: this.predio.bairro,
+        });
       } else {
         this.cadastrarPredio({ nome: this.predio.nome, bairro: this.predio.bairro, idEmpresa: this.idEmpresa });
       }
@@ -154,8 +158,8 @@ export class PrediosList implements OnInit {
     }
   }
 
-  editarPredio(predio: Predio): void {
-    this.predioService.editarPredio(predio)
+  editarPredio(idPredio: string, predio: PredioRequest): void {
+    this.predioService.editarPredio(idPredio, predio)
       .subscribe({
         next: () => {
           this.carregarPredios();

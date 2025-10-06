@@ -30,7 +30,7 @@ export class PredioService {
     return this.httpClient.delete(`${this.url}/predio/deletar/${idPredio}`, { responseType: 'text' });
   }
 
-  editarPredio(predio: Predio): Observable<any> {
-    return this.httpClient.put(`${this.url}/predio/editar/${predio.id}`, predio, { responseType: 'text' });
+  editarPredio(idPredio: string, predio: PredioRequest): Observable<any> {
+    return this.httpClient.put(`${this.url}/predio/editar/${idPredio}`, predio, { responseType: 'text' });
   }
 }

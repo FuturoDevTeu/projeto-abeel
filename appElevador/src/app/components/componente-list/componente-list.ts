@@ -42,6 +42,14 @@ export class ComponenteList implements OnInit {
     hePadrao: false
   };
 
+  situacoesLabels: Record<string, string> = {
+    "APROVADO": "Aprovado",
+    "REPROVADO": "Reprovado",
+    "SIM": "Sim",
+    "NAO": "Não",
+    "NAO_SE_APLICA": "Não se aplica"
+  };
+
   currentImageBase64?: string;
 
   constructor(
@@ -203,7 +211,7 @@ export class ComponenteList implements OnInit {
     if (!this.elevadorId) return;
     this.elevadorService.buscarId(this.elevadorId)
       .subscribe({
-        next: (elevador) => this.router.navigate(['/elevadores', elevador.predioId]),
+        next: (elevador) => this.router.navigate(['/elevadores', elevador.id]),
         error: (err) => console.error(err)
       });
   }

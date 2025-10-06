@@ -63,11 +63,6 @@ public class ComponenteService {
         if(nome.isEmpty()){
             throw new CampoVazioException("Nome está vazio");
         }
-
-        if(cr.existsByNomeAndIdNot(nome, idComponente)){
-            throw new ComponenteJaExisteException("Componente ja existe");
-        }
-
         if((imagem == null || imagem.isEmpty()) && (observacao == null || observacao.isEmpty())){
             throw new CampoVazioException("É preciso ter uma imagem ou uma observação");
         }
