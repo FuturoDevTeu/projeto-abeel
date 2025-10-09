@@ -15,7 +15,6 @@
       </div>
 
       <div class="form-actions">
-        
         <button type="button" mat-raised-button color="primary" (click)="submitForm()">
           {{ predio.id ? 'Atualizar' : 'Cadastrar' }}
         </button>
@@ -27,9 +26,10 @@
 
 <div class="predios-container">
   <div class="header">
-    <input placeholder="Digite o predio" (keyup)="buscarPredio($event)">
-    <img src="/icon-add.png" alt="Adicionar Predio" class="icon-add" (click)="abrirModalParaCadastro()">
+    <input placeholder="Digite o prédio" (keyup)="buscarPredio($event)">
+    <img src="/icon-add.png" alt="Adicionar Prédio" class="icon-add" (click)="abrirModalParaCadastro()">
   </div>
+
   <mat-card *ngFor="let predio of predios"
             class="predio-card"
             [class.selected]="predio.id === selectedPredioId">
@@ -55,5 +55,7 @@
     <div *ngIf="estaCarregando" class="spinner"></div>
   </div>
 
-  <button mat-raised-button color="primary" (click)="voltarEmpresa()">Voltar para empresa</button>
+  <div class="action-footer-container">
+    <button mat-raised-button class="back-button" (click)="voltarEmpresa()">Voltar para empresa</button>
+  </div>
 </div>
