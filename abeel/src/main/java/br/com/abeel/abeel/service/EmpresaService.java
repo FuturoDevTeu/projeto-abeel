@@ -19,6 +19,10 @@ public class EmpresaService {
     @Autowired
     private EmpresaRepository empresaRepository;
 
+    private Empresa buscarEmpresaId(UUID predioId){
+        return empresaRepository.findByPrediosId(predioId).orElseThrow(() -> new EmpresaNaoEncontradaException("Empresa não encontrada"));
+    }
+
     private void validarCadastro(EmpresaEntradaDto dto){
         if(dto.nome().isEmpty()){
             throw new CampoVazioException("Nome está vazio");
@@ -64,4 +68,14 @@ public class EmpresaService {
         empresaRepository.delete(empresa);
         return ResponseEntity.ok().build();
     }
+
+    public ResponseEntity<?> buscarIdPredios(UUID predioId){
+        Empresa empresa = buscarEmpresaId(predioId);
+        EmpresaSaidaDto dto = EmpresaSaidaDto.toDto(empresa);
+
+
+        return ResponseEntity.ok(dto);
+    }
+
+   
 }

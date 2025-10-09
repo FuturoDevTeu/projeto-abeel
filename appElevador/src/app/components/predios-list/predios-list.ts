@@ -176,4 +176,8 @@ export class PrediosList implements OnInit {
     this.selectedPredioId = id;
     this.router.navigate(['/elevadores', id]);
   }
+
+  voltarEmpresa(){
+    this.router.navigate(["/empresa"])
+  }
 }

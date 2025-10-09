@@ -30,6 +30,17 @@ public class PredioController {
         return ps.buscar(nome);
     }
 
+    @GetMapping("/buscar/elevador/{id}")
+    public ResponseEntity<?> buscarElevador(@PathVariable("id") UUID id){
+        return ps.buscarElevador(id);
+    }
+
+    @GetMapping("/buscar/id/{id}")
+    public ResponseEntity<?> buscarIdPredio(@PathVariable("id") UUID idPredio){
+        return ps.buscarPredio(idPredio);
+    }
+
+
     @DeleteMapping("/deletar/{idPredio}")
     public ResponseEntity<?> remover(@PathVariable("idPredio") UUID idPredio){
         return ps.remover(idPredio);
@@ -39,4 +50,6 @@ public class PredioController {
     public ResponseEntity<?> editar(@PathVariable("idPredio") UUID idPredio, @RequestBody PredioEntradaDto dto){
         return ps.editar(dto, idPredio);
     }
+
+
 }

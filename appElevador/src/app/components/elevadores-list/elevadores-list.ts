@@ -9,6 +9,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
+import { EmpresaService } from '../../services/empresa-service';
+import { EmpresaType } from '../../types/Empresa';
+import { PredioService } from '../../services/predio-service';
+import { error } from 'console';
 
 @Component({
   selector: 'app-elevadores',
@@ -39,7 +43,8 @@ export class ElevadoresComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private elevadorService: ElevadorService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private predioService: PredioService
   ) { }
   
   // Abre o modal para cadastrar um novo elevador.
@@ -234,4 +239,23 @@ export class ElevadoresComponent implements OnInit {
     console.log(this.selectedElevadorId)
     this.router.navigate(['/componentes', this.selectedElevadorId]);
   }
+
+ voltarPredio() {
+  if (!this.predioId) {
+    console.error('ID do prédio não definido.');
+    return;
+  }
+   this.predioService.buscarIdPredio(this.predioId).subscribe({
+    next: (predio) => {
+      this.router.navigate(['/predios/', predio.empresaId]);
+    },
+    error:(error) => {
+      console.log(error)
+    }
+
+    }
+   );
+
+}
+
 }

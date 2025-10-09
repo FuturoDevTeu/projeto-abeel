@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/empresa")
@@ -25,6 +28,12 @@ public class EmpresaController {
     public ResponseEntity<?> listarTodas(){
         return empresaService.listarTodas();
     }
+
+    @GetMapping("/buscar/predio/{predioId}")
+    public ResponseEntity<?> buscarIdPredio(@PathVariable UUID predioId){
+        return empresaService.buscarIdPredios(predioId);
+    }
+    
 
     @PutMapping("/editar/{empresaId}")
     public ResponseEntity<?> editar(@PathVariable("empresaId") UUID empresaId, @RequestBody EmpresaEntradaDto dto){

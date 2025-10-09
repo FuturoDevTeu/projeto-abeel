@@ -44,7 +44,7 @@ export const routes: Routes = [
     runGuardsAndResolvers: 'always'
   },
   {
-    // rota agora recebe o ID da empresa
+    
     path: 'predios/:idEmpresa',
     component: PrediosList,
     canActivate: [authGuard],

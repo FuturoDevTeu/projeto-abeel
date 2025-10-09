@@ -33,4 +33,12 @@ export class PredioService {
   editarPredio(idPredio: string, predio: PredioRequest): Observable<any> {
     return this.httpClient.put(`${this.url}/predio/editar/${idPredio}`, predio, { responseType: 'text' });
   }
+
+  buscarIdElevador(idPredio: String): Observable<Predio> {
+    return this.httpClient.get<Predio>(`${this.url}/predio/buscar/elevador/${idPredio}`);
+  }
+
+  buscarIdPredio(idPredio: String): Observable<Predio>{
+    return this.httpClient.get<Predio>(`${this.url}/predio/buscar/id/${idPredio}`);
+  }
 }

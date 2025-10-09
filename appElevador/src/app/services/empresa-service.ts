@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment.development';
 import { Observable } from 'rxjs';
 import { EmpresaType } from '../types/Empresa';
 import { EmpresaRequest } from '../types/EmpresaRequest';
+import { Empresa } from '../components/empresa/empresa';
 
 @Injectable({
   providedIn: 'root'
@@ -31,4 +32,9 @@ export class EmpresaService {
   deletarEmpresa(idEmpresa: string): Observable<any> {
     return this.httpClient.delete(`${this.url}/empresa/deletar/${idEmpresa}`, { responseType: 'text' });
   }
+
+  buscarIdEmpresa(predioId: string): Observable<{ empresa: EmpresaType }> {
+  return this.httpClient.get<{ empresa: EmpresaType }>(`${this.url}/empresa/buscar/predio/${predioId}`);  
+ }
+
 }

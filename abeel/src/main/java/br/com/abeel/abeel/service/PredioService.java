@@ -24,6 +24,11 @@ public class PredioService {
     @Autowired
     private EmpresaRepository er;
 
+    private Predio buscarPorElevador(UUID id){
+        return pr.findByElevadoresId(id).orElseThrow(()-> new PredioNaoEncontradoException("Predio não encontrado"));
+
+    }
+
     private void validarCadastro(PredioEntradaDto dto){
         if(dto.nome().isEmpty()){
             throw new CampoVazioException("Nome está vazio");
@@ -107,5 +112,18 @@ public class PredioService {
         predio.setNome(dto.nome());
         pr.save(predio);
         return ResponseEntity.status(HttpStatus.OK).body("Prédio alterado com sucesso");
+    }
+
+    public ResponseEntity<?> buscarElevador(UUID id){
+       Predio predio = buscarPorElevador(id);
+       PredioSaidaDto dto = PredioSaidaDto.toDto(predio);
+       return ResponseEntity.ok(dto);
+    }
+
+    public ResponseEntity<?> buscarPredio(UUID id){
+        Predio predio = buscarPeloIdPredio(id);
+        PredioSaidaDto dto = PredioSaidaDto.toDto(predio);
+
+        return ResponseEntity.ok(dto);
     }
 }

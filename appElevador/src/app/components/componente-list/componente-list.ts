@@ -8,6 +8,7 @@ import { ComponenteRequest } from '../../types/ComponenteRequest';
 import { ElevadorService } from '../../services/elevador-service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { PredioService } from '../../services/predio-service';
 
 @Component({
   selector: 'app-componente-list',
@@ -57,7 +58,8 @@ export class ComponenteList implements OnInit {
     private router: Router,
     private componenteService: ComponenteService,
     private cdr: ChangeDetectorRef,
-    private elevadorService: ElevadorService
+    private elevadorService: ElevadorService,
+    private predioService: PredioService
   ) {}
 
   ngOnInit(): void {
@@ -209,9 +211,11 @@ export class ComponenteList implements OnInit {
 
   voltarElevador() {
     if (!this.elevadorId) return;
-    this.elevadorService.buscarId(this.elevadorId)
+      this.predioService.buscarIdElevador(this.elevadorId)
       .subscribe({
-        next: (elevador) => this.router.navigate(['/elevadores', elevador.id]),
+        next: (predio) => {
+          this.router.navigate(['/elevadores', predio.id]) },
+    
         error: (err) => console.error(err)
       });
   }
