@@ -61,7 +61,6 @@ public class ComponenteController {
             @RequestParam(value = "imagem", required = false) @Nullable MultipartFile imagem,
             @RequestParam("observacao") String observacao,
             @RequestParam("hePadrao") boolean hePadrao
-
     ){
         return cs.editar(idComponente, nome, situacao, imagem, observacao, hePadrao);
     }

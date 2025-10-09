@@ -69,8 +69,9 @@
 
         @Bean
         public CorsConfigurationSource corsConfigurationSource(){
+            String[] allowed = {"https://aaabeel.vercel.app", "http://localhost:4200"};
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOriginPatterns(List.of("http://localhost:4200"));
+            config.setAllowedOriginPatterns(List.of(allowed));
             config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
             config.setAllowedHeaders(List.of("*"));
             config.setAllowCredentials(true);

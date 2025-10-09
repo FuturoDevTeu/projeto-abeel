@@ -43,6 +43,11 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ExceptionHandler(ImagemNaoRenderizadaException.class)
+    public ResponseEntity<?> handlerImagemNaoRenderizadaException(ImagemNaoRenderizadaException ex){
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
     @ExceptionHandler(ComponenteNaoEncontradoException.class)
     public ResponseEntity<?> handlerComponenteNaoEncontradoException(ComponenteNaoEncontradoException ex){
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());

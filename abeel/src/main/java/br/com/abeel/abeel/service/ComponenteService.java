@@ -63,9 +63,6 @@ public class ComponenteService {
         if(nome.isEmpty()){
             throw new CampoVazioException("Nome está vazio");
         }
-        if((imagem == null || imagem.isEmpty()) && (observacao == null || observacao.isEmpty())){
-            throw new CampoVazioException("É preciso ter uma imagem ou uma observação");
-        }
         if(imagem != null){
             if(!imagem.getContentType().matches("^image/.*$")){
                 throw new ImagemIncorretaException("Apenas imagem são permitidas");
@@ -189,7 +186,9 @@ public class ComponenteService {
         Situacao situacao = sr.findByNome(Situacao.Values.valueOf(situacaoDto.name()).getRegistro());
         componente.setNome(nome);
         componente.setSituacao(situacao);
-        componente.setImagem(imagemBytes);
+        if(imagemBytes != null){
+            componente.setImagem(imagemBytes);
+        }
         componente.setObservacao(observacao);
         componente.setHePadrao(hePadrao);
 
