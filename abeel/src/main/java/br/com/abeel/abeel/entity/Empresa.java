@@ -25,7 +25,7 @@ public class Empresa {
     @Column(name = "nome")
     private String nome;
 
-    @OneToMany(mappedBy = "empresa")
+    @OneToMany(mappedBy = "empresa", orphanRemoval = true, cascade = CascadeType.ALL)
     @Column(name = "predios")
     private List<Predio> predios;
 

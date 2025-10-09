@@ -1,6 +1,5 @@
 package br.com.abeel.abeel.service;
 
-import br.com.abeel.abeel.controller.dto.ComponenteEntradaDto;
 import br.com.abeel.abeel.controller.dto.ElevadorEntradaDto;
 import br.com.abeel.abeel.controller.dto.ElevadorSaidaDto;
 import br.com.abeel.abeel.entity.Componente;
@@ -8,12 +7,14 @@ import br.com.abeel.abeel.entity.Elevador;
 import br.com.abeel.abeel.entity.Predio;
 import br.com.abeel.abeel.exception.CampoVazioException;
 import br.com.abeel.abeel.exception.ElevadorNaoEncontradoException;
+import br.com.abeel.abeel.exception.ImagemNaoRenderizadaException;
 import br.com.abeel.abeel.exception.PredioNaoEncontradoException;
 import br.com.abeel.abeel.repository.ComponenteRepository;
 import br.com.abeel.abeel.repository.ElevadorRepository;
 import br.com.abeel.abeel.repository.PredioRepository;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -172,7 +174,7 @@ public class ElevadorService {
         tabelaCabecalho.addCell(celulaElevador);
         document.add(tabelaCabecalho);
 
-        PdfPTable tabelaConteudo = new PdfPTable(3);
+        PdfPTable tabelaConteudo = new PdfPTable(4);
         tabelaConteudo.setWidthPercentage(100);
         tabelaConteudo.setSpacingBefore(10f);
         tabelaConteudo.setSpacingAfter(10f);
@@ -183,19 +185,37 @@ public class ElevadorService {
         celulaSituacao.setBackgroundColor(Color.YELLOW);
         PdfPCell celulaObservacao = new PdfPCell(new Phrase("Observacao", fonteTitulo));
         celulaObservacao.setBackgroundColor(Color.YELLOW);
+        PdfPCell celulaImagem = new PdfPCell(new Phrase("Imagem", fonteTitulo));
+        celulaImagem.setBackgroundColor(Color.YELLOW);
 
         tabelaConteudo.addCell(celulaNome);
         tabelaConteudo.addCell(celulaSituacao);
         tabelaConteudo.addCell(celulaObservacao);
+        tabelaConteudo.addCell(celulaImagem);
 
         for (Componente componente : elevador.getComponentes()){
-            PdfPCell celulaNoneC = new PdfPCell(new Phrase(componente.getNome()));
+            PdfPCell celulaNomeC = new PdfPCell(new Phrase(componente.getNome()));
             PdfPCell celulaSituacaoC = new PdfPCell(new Phrase(componente.getSituacao().getNome()));
             var obs = componente.getObservacao() == null ? "Não há observação" : componente.getObservacao();
             PdfPCell celulaObservacaoC = new PdfPCell(new Phrase(obs));
-            tabelaConteudo.addCell(celulaNoneC);
+            PdfPCell celulaImagemC = new PdfPCell();
+            byte[] imageByte = componente.getImagem();
+            if(imageByte != null && imageByte.length > 0) {
+                try{
+                    Image image = Image.getInstance(imageByte);
+                    image.scaleToFit(80,80);
+                    celulaImagemC.addElement(image);
+                }catch(IOException ex){
+                    throw new ImagemNaoRenderizadaException("Não foi possivel renderizar a imagem");
+                }
+            }else{
+                celulaImagemC.setPhrase(new Phrase("Não há imagem"));
+            }
+
+            tabelaConteudo.addCell(celulaNomeC);
             tabelaConteudo.addCell(celulaSituacaoC);
             tabelaConteudo.addCell(celulaObservacaoC);
+            tabelaConteudo.addCell(celulaImagemC);
         }
         document.add(tabelaConteudo);
         document.close();
